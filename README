@@ -1,0 +1,15 @@
+Building
+--------
+
+Place src/warships in your $GOPATH
+
+Run `go install warships/net` to install the net library
+
+Run `go install warships/launcher`
+
+Run `$GOPATH/bin/launcher s <PORT>` to run server listening on specified <PORT>
+
+Run `$GOPATH/bin/launcher c <ADDRESS:PORT>` to connect to server as client on
+specificed <ADDRESS:PORT>
+
+By Jason Meredith
