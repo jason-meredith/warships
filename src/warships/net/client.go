@@ -9,12 +9,14 @@ import (
     "net"
     "os"
     "encoding/gob"
+    "warships/game"
 )
 
 // const StopCharacter  = '\n'
 
-type Player struct {
-
+type NetMessage struct {
+    player *game.Player
+    Command string
 }
 
 func StartClient() {
@@ -29,18 +31,18 @@ func StartClient() {
 
     for {
 
-        cmd := Command{}
+        msg := NetMessage{}
 
         // Prompt for and read player command
         fmt.Print("Enter command > ")
         command, _ := reader.ReadString('\n')
 
-        cmd.CmdString = strings.TrimSpace(command)
+        msg.Command = strings.TrimSpace(command)
 
         // Gob the command to send to server
         buf := new(bytes.Buffer)
         encoder := gob.NewEncoder(buf)
-        err := encoder.Encode(cmd)
+        err := encoder.Encode(msg)
 
         checkError(err)
 

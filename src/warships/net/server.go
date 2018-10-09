@@ -42,13 +42,13 @@ func handleClient(conn net.Conn) {
 
     for{
 
-        // Decode incoming gob'ed Command struct
-        incomingCmd := &Command{}
-        decoder.Decode(incomingCmd)
+        // Decode incoming gob'ed NetMessage struct
+        incomingMsg := &NetMessage{}
+        decoder.Decode(incomingMsg)
 
-        // If the Command is not null process the Command and write send response to client
-        if(incomingCmd.CmdString != "") {
-            returnValue := processCommand(*incomingCmd)
+        // If the NetMessage is not null process the NetMessage and write send response to client
+        if(incomingMsg.Command != "") {
+            returnValue := processCommand(*incomingMsg)
 
             conn.Write([]byte(returnValue))
         }
@@ -58,8 +58,8 @@ func handleClient(conn net.Conn) {
     conn.Close()
 }
 
-func processCommand(incoming_cmd Command) string {
-    fmt.Printf("Command: %v\n", incoming_cmd.CmdString)
+func processCommand(incomingMsg NetMessage) string {
+    fmt.Printf("NetMessage: %v\n", incomingMsg.Command)
 
     return "Miss! Try again"
 }

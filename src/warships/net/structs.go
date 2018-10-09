@@ -5,10 +5,7 @@ import (
 	"os"
 )
 
-type Command struct {
-	//player Player
-	CmdString string
-}
+
 
 
 func checkError(err error) {
