@@ -1,6 +1,12 @@
 package game
 
-import "math"
+import (
+	"crypto/md5"
+	"fmt"
+	"io"
+	"math"
+	"time"
+)
 
 type Player struct {
 
@@ -10,6 +16,7 @@ type Player struct {
 	// Pointer to Team this player is on
 	Team *Team
 
+	Id 		string
 
 }
 
@@ -53,14 +60,21 @@ func (game *Game) GetSmallestTeam() *Team {
 // This should be used to instantiate a new Player
 func (team *Team) NewPlayer (username string) (*Player, error) {
 
+	// Generate New Player ID
+	h := md5.New()
+	seed := username + time.Now().String()
+	io.WriteString(h, seed)
+	id := fmt.Sprintf("%x", h.Sum(nil))
+
 	// Create new player
-	newPlayer := Player{username, 0, team}
+	newPlayer := Player{username, 0, team, id}
 
 	// Add reference to player to Team.Players array
 	team.Players = append(team.Players, &newPlayer)
 
 	// Increment number of Players on Team
 	team.NumPlayers += 1
+
 
 	return &newPlayer, nil
 
@@ -79,6 +93,24 @@ func (game *Game) NewTeam() *Team {
 	game.Teams = append(game.Teams, &team)
 
 	return &team
+}
+
+// Find and return a Player using their Player ID
+func (game *Game) GetPlayerById(id string) *Player {
+	var result *Player = nil
+
+	// Iterate through each Team
+	for _, team := range game.Teams {
+		// Iterate through each Player on each Team
+		for _, player := range team.Players {
+			if player.Id == id {
+				result = player
+			}
+		}
+
+	}
+
+	return result
 }
 
 // Switches a Players Team

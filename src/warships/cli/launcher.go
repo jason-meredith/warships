@@ -8,7 +8,6 @@ import (
 	"time"
 	"warships/game"
 	"warships/net"
-	"warships/net/old"
 )
 
 var logo = `
@@ -71,7 +70,7 @@ func startServer() {
 
 	newGame := game.Game{}
 	newGame.Live =          true
-	newGame.Port =          old.CONNECT_PORT
+	newGame.Port =          net.CONNECT_PORT
 	newGame.Password =      options[PASSWRD]
 	newGame.StartTime =     time.Now()
 	newGame.AdminPassword = options[ADMIN_PASSWRD]
@@ -105,15 +104,4 @@ func joinGame() {
 					)
 
 	net.JoinServer(strings.TrimRight(options[USERNAME], "\n"), options[SERV_ADDR])
-/*
-	address, err := net.ResolveTCPAddr("tcp4", options[SERV_ADDR] + ":"+  string(connect.CONNECT_PORT))
-
-	connect := ConnectionString{
-		address,
-		options[USERNAME],
-		options[PASSWRD],
-
-	}
-*/
-	fmt.Printf("%v", options)
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/rpc"
 	"strconv"
+	"time"
 	"warships/game"
 )
 
@@ -16,6 +17,7 @@ type Server struct {
 	game	*game.Game
 }
 
+const CONNECT_PORT = 51831
 const RPC_PORT = 51832
 
 // StartGameServer handles all incoming client requests
@@ -54,14 +56,23 @@ func (t *Server) DoubleNum(num int, result *int) error {
 	return nil
 }
 
+func timeStamp() {
+	fmt.Printf("\n --- %v ---\n", time.Now())
+}
+
 // JoinGame joins a Player to the running Server
-func (t *Server) JoinGame(username string, player *game.Player) error {
+func (t *Server) JoinGame(username string, playerId *string) error {
 
-	player, err := t.game.GetSmallestTeam().NewPlayer(username)
+	newPlayer, err := t.game.GetSmallestTeam().NewPlayer(username)
 
-	fmt.Printf("New player joined: %v [%#v]\n", username, player)
-	fmt.Printf("\tPlayer ID: %v\n", &player)
-	fmt.Printf("\tAssigned to team %#v\n", player.Team)
+	//player.Username = newPlayer.Username
+
+	*playerId = newPlayer.Id
+
+	timeStamp()
+	fmt.Printf("New player joined: %v\n", username)
+	fmt.Printf("\t-Player ID: %v\n", newPlayer.Id)
+	fmt.Printf("\t-Assigned to team %#v\n", &(newPlayer.Team))
 
 	return err
 }
