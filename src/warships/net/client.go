@@ -1,62 +1,26 @@
 package net
 
 import (
-    "bytes"
-    "bufio"
-    "fmt"
-    "strings"
-
-    "net"
-    "os"
-    "encoding/gob"
-    "warships/game"
+	"fmt"
+	"net/rpc"
+	"strconv"
+	"warships/game"
 )
 
-// const StopCharacter  = '\n'
+func JoinServer(username, address string) {
 
-type NetMessage struct {
-    player *game.Player
-    Command string
-}
+	client, err := rpc.DialHTTP("tcp", address + ":" + strconv.Itoa(RPC_PORT))
+	if err != nil {
+		panic(err)
+	}
 
-func StartClient() {
+	var player game.Player
 
-    // Retrieve the server address:port from args and attempt to connect
-    service := os.Args[2]
-    tcpAddr, _ := net.ResolveTCPAddr("tcp4", service)
-    conn, _ := net.Dial("tcp", tcpAddr.String())
+	err = client.Call("Server.JoinGame", &username, &player)
+	if err != nil {
+		panic(err)
+	}
 
-    // Reader for reading keyboard input
-    reader := bufio.NewReader(os.Stdin)
-
-    for {
-
-        msg := NetMessage{}
-
-        // Prompt for and read player command
-        fmt.Print("Enter command > ")
-        command, _ := reader.ReadString('\n')
-
-        msg.Command = strings.TrimSpace(command)
-
-        // Gob the command to send to server
-        buf := new(bytes.Buffer)
-        encoder := gob.NewEncoder(buf)
-        err := encoder.Encode(msg)
-
-        checkError(err)
-
-        conn.Write(buf.Bytes())
-
-        // Read server response
-        buffer := make([]byte, 1024)
-        resultLength, _ := conn.Read(buffer)
-
-        fmt.Println(string(buffer[:resultLength]) + "\n")
-
-    }
-
-    os.Exit(0)
-
+	fmt.Printf("Joined Game: %#v\n", player )
 
 }

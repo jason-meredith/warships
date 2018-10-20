@@ -1,35 +1,51 @@
 package game
 
-
+import "math"
 
 type Player struct {
 
-	username 	string
-	score 		int
+	Username string
+	Score    int
 
-	// Pointer to team this player is on
-	team 		*Team
+	// Pointer to Team this player is on
+	Team *Team
 
 
 }
 
 type Team struct {
 
-	game 		*Game
+	Game *Game
 
 	// Array of pointers to Player
-	players 	[]*Player
+	Players []*Player
 
-	// Number of players currently on team
-	numPlayers 	int
+	// Number of Players currently on Team
+	NumPlayers int
 
 
-	// A log of shots fired by this team and shots upon this team
-	shotsFired		[]Target
-	shotsUpon		[]Target
+	// A log of shots fired by this Team and shots upon this Team
+	ShotsFired []Target
+	ShotsUpon  []Target
 
-	// This team's ships
-	ships			[]*Ship
+	// This Team's Ships
+	Ships []*Ship
+
+}
+
+func (game *Game) GetSmallestTeam() *Team {
+
+	var smallestTeam *Team
+	smallestAmount := math.MaxInt32
+
+	for _, team := range game.Teams {
+		if team.NumPlayers < smallestAmount {
+			smallestAmount = team.NumPlayers
+			smallestTeam = team
+		}
+	}
+
+	return smallestTeam
 
 }
 
@@ -40,48 +56,58 @@ func (team *Team) NewPlayer (username string) (*Player, error) {
 	// Create new player
 	newPlayer := Player{username, 0, team}
 
-	// Add reference to player to Team.players array
-	team.players = append(team.players, &newPlayer)
+	// Add reference to player to Team.Players array
+	team.Players = append(team.Players, &newPlayer)
 
 	// Increment number of Players on Team
-	team.numPlayers += 1
+	team.NumPlayers += 1
 
 	return &newPlayer, nil
 
 }
 
 // Instantiates a new Team
-func (game *Game) NewTeam() Team {
-	return Team{ game,make([]*Player, 20), 0, []Target{}, []Target{}, []*Ship{} }
+func (game *Game) NewTeam() *Team {
+	team := Team{ game,
+	make([]*Player, 20),
+	0,
+	[]Target{},
+	[]Target{},
+	[]*Ship{},
+	}
+
+	game.Teams = append(game.Teams, &team)
+
+	return &team
 }
 
-// Switches a Players team
+// Switches a Players Team
 func SwitchTeam(player *Player, destTeam *Team) {
 
 	// Get the Players original Team
-	originalTeam := *player.team
+	originalTeam := *player.Team
 
-	// Find the index in the Team.players array of the Player
+	// Find the index in the Team.Players array of the Player
 	playerIndex := originalTeam.findPlayerIndex(player)
 
 	// Remove that element from array
-	originalTeam.players = append(originalTeam.players[:playerIndex],
-		originalTeam.players[playerIndex+1:]...)
+	originalTeam.Players = append(originalTeam.Players[:playerIndex],
+		originalTeam.Players[playerIndex+1:]...)
 
-	// Change the Player.team value
-	*player.team = *destTeam
+	// Change the Player.Team value
+	*player.Team = *destTeam
 
 	// Increment destTeam player count
-	destTeam.numPlayers++
+	destTeam.NumPlayers++
 
-	// Add Player to destTeam.players array
-	destTeam.players = append(destTeam.players, player)
+	// Add Player to destTeam.Players array
+	destTeam.Players = append(destTeam.Players, player)
 
 }
 
 // Find the index of Player in a Teams Player array
 func (team Team) findPlayerIndex(player *Player) int {
-	playerList := team.players
+	playerList := team.Players
 
 	for i, v := range playerList {
 		if(v == player) {
@@ -95,21 +121,21 @@ func (team Team) findPlayerIndex(player *Player) int {
 
 func main() {
 
-	team := NewTeam()
+	Team := NewTeam()
 	otherTeam := NewTeam()
 
-	fmt.Printf("Original\nTeam 1: %x\nTeam 2: %x\n\n", team, otherTeam)
+	fmt.Printf("Original\nTeam 1: %X\nTeam 2: %X\n\n", Team, otherTeam)
 
-	player, _:= (&team).NewPlayer("Jason")
+	player, _:= (&Team).NewPlayer("Jason")
 
 
-	fmt.Printf("After add player\nTeam 1: %x\nTeam 2: %x\n\n", team, otherTeam)
+	fmt.Printf("After add player\nTeam 1: %X\nTeam 2: %X\n\n", Team, otherTeam)
 
 	SwitchTeam(player, &otherTeam)
 
 
-	fmt.Printf("After switch player\nTeam 1: %x\nTeam 2: %x\n\n", team, otherTeam)
+	fmt.Printf("After switch player\nTeam 1: %X\nTeam 2: %X\n\n", Team, otherTeam)
 
-	//fmt.Println(team)
+	//fmt.Println(Team)
 	//fmt.Println(player)
 }*/

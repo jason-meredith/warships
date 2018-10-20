@@ -3,6 +3,7 @@ package game
 import (
 	"errors"
 	"math"
+	"time"
 )
 
 type Orientation uint8
@@ -20,44 +21,57 @@ const (
 )
 
 type Target struct {
-	x				rune
-	y 				uint8
+	X rune
+	Y uint8
 }
 
 type Coordinate struct {
-	x 				uint8
-	y 				uint8
+	X uint8
+	Y uint8
 }
 
 type Game struct {
 
-	teams			[]*Team
+	// As long as this is true server will keep running
+	Live			bool
 
-	shipLimit		uint8
+	// Game server info
+	Port			uint16
+	Password		string
+	StartTime		time.Time
+	AdminPassword	string
 
-	boardSize		uint8
+	// The maximum ratio as 1:X that teams can be unbalanced
+	// before Players from a short-handed Team can no longer
+	// switch to a loaded Team
 
+	MaxPlayers		uint8
+	ShipLimit		uint8
+	BoardSize		uint8
+
+	Teams			[]*Team
 
 }
 
 type Ship struct {
-	team 		*Team
+	Team 		*Team
 
-	size        uint8
-	orientation Orientation
-	location    Coordinate
+	Size        uint8
+	Orientation Orientation
+	Location    Coordinate
 
 
-	health		uint8			// Bit-field representing spots hit on this Ship
+	Health		uint8 // Bit-field representing spots hit on this Ship
 
 }
 
-// ToCoordinate converts a Target (base64/number pair ex: B12) to a Coordinate (x,y pair)
-// TODO: Targets are currently Rune/Int, limited x axis to 26. Make this a base 26 number (A-Z, AA, AB, AC, etc)
-func (target Target) ToCoordinate() Coordinate {
-	x := uint8(target.x - 'A')
 
-	return Coordinate{ x, target.y }
+// ToCoordinate converts a Target (base64/number pair ex: B12) to a Coordinate (X,Y pair)
+// TODO: Targets are currently Rune/Int, limited X axis to 26. Make this a base 26 number (A-Z, AA, AB, AC, etc)
+func (target Target) ToCoordinate() Coordinate {
+	x := uint8(target.X - 'A')
+
+	return Coordinate{ x, target.Y}
 }
 
 
@@ -66,18 +80,18 @@ func (target Target) ToCoordinate() Coordinate {
 func FireShot(player *Player, targetTeam *Team, target Target) ShotResult {
 
 	// Translate Target to an integer-pair Coordinate
-	coordinate := target.ToCoordinate();
+	coordinate := target.ToCoordinate()
 
 	// If there is a Ship at the given Coordinates, CheckLocation will
 	// return the Ship that is there; otherwise it will return nil.
-	enemyShip := CheckLocation(targetTeam, coordinate);
+	enemyShip := CheckLocation(targetTeam, coordinate)
 
 	// If there is no Ship there, return MISS, otherwise mark a HIT on the Ship
 	// and return what hit() returns (HIT or SINK)
 	if enemyShip == nil {
-		return MISS;
+		return MISS
 	} else {
-		return enemyShip.Hit(coordinate);
+		return enemyShip.Hit(coordinate)
 	}
 
 }
@@ -85,15 +99,15 @@ func FireShot(player *Player, targetTeam *Team, target Target) ShotResult {
 // getOccupyingSpaces returns an array of Coordinates that are occupied by this Ship
 func (ship Ship) GetOccupyingSpaces() []Coordinate {
 
-	coordinateArray := []Coordinate{};
+	var coordinateArray []Coordinate
 
-	if ship.orientation == VERTICAL {
-		for y := uint8(0) ; y < ship.size; y++ {
-			coordinateArray = append(coordinateArray, Coordinate{ ship.location.x, ship.location.y + y})
+	if ship.Orientation == VERTICAL {
+		for y := uint8(0) ; y < ship.Size; y++ {
+			coordinateArray = append(coordinateArray, Coordinate{ ship.Location.X, ship.Location.Y + y})
 		}
 	} else {
-		for x := uint8(0) ; x < ship.size; x++ {
-			coordinateArray = append(coordinateArray, Coordinate{ ship.location.x + x, ship.location.y})
+		for x := uint8(0) ; x < ship.Size; x++ {
+			coordinateArray = append(coordinateArray, Coordinate{ ship.Location.X + x, ship.Location.Y})
 		}
 	}
 
@@ -105,7 +119,7 @@ func (ship Ship) GetOccupyingSpaces() []Coordinate {
 func CheckLocation(targetTeam *Team, target Coordinate) *Ship {
 
 	// Loop through enemy Ships
-	for _, ship := range targetTeam.ships {
+	for _, ship := range targetTeam.Ships {
 		// Loop through each Ship's occupying spaces
 		for _, coordinate := range ship.GetOccupyingSpaces() {
 			if target == coordinate {
@@ -127,18 +141,18 @@ func (ship *Ship) Hit(coordinate Coordinate) ShotResult {
 
 	var offset uint8
 
-	if ship.orientation == VERTICAL {
-		// How many square from location was the hit
-		offset = coordinate.y - ship.location.y;
+	if ship.Orientation == VERTICAL {
+		// How many square from Location was the hit
+		offset = coordinate.Y - ship.Location.Y
 	} else {
-		offset = coordinate.x - ship.location.x;
+		offset = coordinate.X - ship.Location.X
 	}
 
 	bitmask :=  ProduceHitBitmask(offset)
 
-	ship.health = ship.health & bitmask
+	ship.Health = ship.Health & bitmask
 
-	if ship.health == 0  {
+	if ship.Health == 0  {
 		return SINK
 	}
 
@@ -149,32 +163,32 @@ func (ship *Ship) Hit(coordinate Coordinate) ShotResult {
 func (team *Team) NewShip(size uint8, orientation Orientation, coordinate Coordinate) (*Ship, error) {
 
 	// Make sure ship limit hasn't been reached
-	if len(team.ships) >= int(team.game.shipLimit) {
-		return nil, errors.New("Ship Limit For This Team Has Been Reached");
+	if len(team.Ships) >= int(team.Game.ShipLimit) {
+		return nil, errors.New("ship Limit For This Team Has Been Reached")
 	}
 
 
 	// Make sure not out of bounds of Game area
-	if orientation == HORIZONTAL && coordinate.x > (team.game.boardSize - size) {
-		return nil, errors.New("ship being placed outside horizontal bound");
+	if orientation == HORIZONTAL && coordinate.X > (team.Game.BoardSize - size) {
+		return nil, errors.New("ship being placed outside horizontal bound")
 	}
-	if orientation == VERTICAL && coordinate.y > (team.game.boardSize - size) {
-		return nil, errors.New("ship being placed outside vertical bound");
+	if orientation == VERTICAL && coordinate.Y > (team.Game.BoardSize - size) {
+		return nil, errors.New("ship being placed outside vertical bound")
 	}
 
 	// Make sure no overlaps occur
 	if orientation == HORIZONTAL {
 		for x := uint8(0); x < size; x++ {
-			if CheckLocation(team, Coordinate{x + coordinate.x, coordinate.y}) != nil {
-				return nil, errors.New("ship overlap, cannot place Ship here");
+			if CheckLocation(team, Coordinate{x + coordinate.X, coordinate.Y}) != nil {
+				return nil, errors.New("ship overlap, cannot place Ship here")
 			}
 		}
 	}
 
 	if orientation == VERTICAL {
 		for y := uint8(0); y < size; y++ {
-			if CheckLocation(team, Coordinate{coordinate.x, y + coordinate.y}) != nil {
-				return nil, errors.New("ship overlap, cannot place Ship here");
+			if CheckLocation(team, Coordinate{coordinate.X, y + coordinate.Y}) != nil {
+				return nil, errors.New("ship overlap, cannot place Ship here")
 			}
 		}
 	}
@@ -186,18 +200,18 @@ func (team *Team) NewShip(size uint8, orientation Orientation, coordinate Coordi
 		orientation,
 		coordinate,
 
-		// Bit field of 1s the length of the Ship size ie Ship size 4 -> 11110000, 2 -> 11000000
+		// Bit field of 1s the length of the Ship Size ie Ship Size 4 -> 11110000, 2 -> 11000000
 		GetHealthBitfield(size),
 
 	}
 
-	team.ships = append(team.ships, &ship);
+	team.Ships = append(team.Ships, &ship)
 
 
-	return &ship, nil;
+	return &ship, nil
 }
 
 // GetHealthBitfield returns a bitfield representing the Ship and thats parts of it that are hit and unscathed.
 func GetHealthBitfield(size uint8) uint8 {
-	return (uint8(math.Pow(2, float64(size))) - 1) << (8 - size);
+	return (uint8(math.Pow(2, float64(size))) - 1) << (8 - size)
 }

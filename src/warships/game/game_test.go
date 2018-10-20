@@ -4,10 +4,30 @@ import (
 	"testing"
 )
 
-func TestTeam_NewShip(t *testing.T) {
-	game := Game{[]*Team{}, 32, 128}
+func SetupTeam() Team {
+	game := Game{}
 
-	team := game.NewTeam()
+	game.Teams = []*Team{}
+	game.MaxPlayers = 32
+	game.ShipLimit = 100
+	game.BoardSize = 128
+
+	return *game.NewTeam()
+}
+
+func (team *Team) GetTestShip() *Ship {
+	size := uint8(5);
+	orientation := VERTICAL;
+	location := Coordinate{ 10, 10}
+
+	testShip, _ := team.NewShip(size, orientation, location);
+
+	return testShip
+}
+
+func TestTeam_NewShip(t *testing.T) {
+
+	team := SetupTeam()
 
 	// New Ship details
 	size := uint8(5);
@@ -21,31 +41,31 @@ func TestTeam_NewShip(t *testing.T) {
 		t.Error("Error Thrown: ", err);
 	}
 
-	if testShip.team != &team {
+	if testShip.Team != &team {
 		t.Error("Ship Team not set");
 	}
 
-	if testShip.location != location {
+	if testShip.Location != location {
 		t.Error("Ship Location not set");
 	}
 
-	if testShip.orientation != VERTICAL {
+	if testShip.Orientation != VERTICAL {
 		t.Error("Ship Orientation not set");
 	}
 
-	if testShip.size != size {
+	if testShip.Size != size {
 		t.Error("Ship Size not set");
 	}
 
 	t.Run("Error Check - Boundaries", func(t *testing.T) {
 		_, err := team.NewShip(size, HORIZONTAL, Coordinate{125, 0})
 		if err == nil {
-			t.Error("Creating Ship out of x bounds should have returned error");
+			t.Error("Creating Ship out of X bounds should have returned error");
 		}
 
 		_, err = team.NewShip(size, VERTICAL, Coordinate{0, 125})
 		if err == nil {
-			t.Error("Creating Ship out of y bounds should have returned error");
+			t.Error("Creating Ship out of Y bounds should have returned error");
 		}
 
 	})
@@ -62,16 +82,9 @@ func TestTeam_NewShip(t *testing.T) {
 }
 
 func TestShip_GetOccupyingSpaces(t *testing.T) {
-	game := Game{[]*Team{}, 32, 128}
 
-	team := game.NewTeam()
-
-	// New Ship details
-	size := uint8(5);
-	orientation := VERTICAL;
-	location := Coordinate{ 10, 10}
-
-	testShip, _ := team.NewShip(size, orientation, location);
+	team := SetupTeam()
+	testShip := team.GetTestShip()
 
 	expectedResults := []Coordinate{
 		{10, 10},
@@ -95,16 +108,9 @@ func TestShip_GetOccupyingSpaces(t *testing.T) {
 }
 
 func TestCheckLocation(t *testing.T) {
-	game := Game{[]*Team{}, 32, 128}
 
-	team := game.NewTeam()
-
-	// New Ship details
-	size := uint8(5);
-	orientation := VERTICAL;
-	location := Coordinate{ 10, 10}
-
-	testShip, _ := team.NewShip(size, orientation, location);
+	team := SetupTeam()
+	testShip := team.GetTestShip()
 
 	ship := CheckLocation(&team, Coordinate{9,9})
 
@@ -125,7 +131,7 @@ func TestGetHealthBitfield(t *testing.T) {
 
 	// Size 2 should result in bit-field 11000000 = 192
 	if result != 192 {
-		t.Error("Bitfield returning proper value for size 2")
+		t.Error("Bitfield returning proper value for Size 2")
 	}
 
 	result = GetHealthBitfield(4)
@@ -145,9 +151,8 @@ func TestGetHealthBitfield(t *testing.T) {
 
 
 func TestShip_Hit(t *testing.T) {
-	game := Game{[]*Team{}, 32, 128}
 
-	team := game.NewTeam()
+	team := SetupTeam()
 
 	// New Ship details
 	size := uint8(5);
@@ -159,7 +164,7 @@ func TestShip_Hit(t *testing.T) {
 
 	// Bitmask: 0111 1111 & 1111 1000 -> 0111 1000 (120)
 	result := testShip.Hit(Coordinate{0, 0})
-	if testShip.health != 120 {
+	if testShip.Health != 120 {
 		t.Error("Health not depleted as expected")
 	}
 
@@ -169,25 +174,25 @@ func TestShip_Hit(t *testing.T) {
 
 	// Bitmask: 1011 1111 & 0111 1000 -> 0011 1000 (56)
 	testShip.Hit(Coordinate{0, 1})
-	if testShip.health != 56 {
+	if testShip.Health != 56 {
 		t.Error("Health not depleted as expected")
 	}
 
 	// Bitmask: 1101 1111 & 0011 1000 -> 0001 1000 (24)
 	testShip.Hit(Coordinate{0, 2})
-	if testShip.health != 24 {
+	if testShip.Health != 24 {
 		t.Error("Health not depleted as expected")
 	}
 
 	// Bitmask: 1110 1111 & 0001 1000 -> 0000 1000 (8)
 	testShip.Hit(Coordinate{0, 3})
-	if testShip.health != 8 {
+	if testShip.Health != 8 {
 		t.Error("Health not depleted as expected")
 	}
 
 	// Bitmask: 1111 0111 & 0000 0000 -> 0000 0000 (0)
 	result = testShip.Hit(Coordinate{0, 4})
-	if testShip.health != 0  {
+	if testShip.Health != 0  {
 		t.Error("Health not depleted as expected")
 	}
 

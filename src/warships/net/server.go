@@ -1,65 +1,67 @@
 package net
 
 import (
-    //"bufio"
-    "encoding/gob"
-    "net"
-    "fmt"
-    "os"
+	"fmt"
+	"net"
+	"net/http"
+	"net/rpc"
+	"strconv"
+	"warships/game"
 )
 
-
-func StartServer() {
-
-    // Get port from args and listen
-    service := ":" + os.Args[2]
-    tcpAddr, err := net.ResolveTCPAddr("tcp4", service)
-    listener, err := net.Listen("tcp", tcpAddr.String())
-
-    checkError(err)
-
-    fmt.Printf("Listening on port %v\n", os.Args[2])
-
-    // For every incoming request create new goroutine
-    for {
-        conn, err := listener.Accept()
-        if err != nil {
-            continue
-        }
-
-        go handleClient(conn)
-
-    }
+// Server is a struct exposed to clients and acts a buffer between clients
+// and the actual Game
+type Server struct {
+	//Test 	int
+	game	*game.Game
 }
 
-func handleClient(conn net.Conn) {
+const RPC_PORT = 51832
 
-    // Get the address of the connecting player
-    connectionAddress := conn.RemoteAddr().String();
-    fmt.Printf("Incoming connection: %v\n", connectionAddress)
+// StartGameServer handles all incoming client requests
+func StartGameServer(newGame *game.Game) {
 
-    decoder := gob.NewDecoder(conn)
+	fmt.Println("Starting Server")
 
-    for{
+	//server := Server{ newGame }
 
-        // Decode incoming gob'ed NetMessage struct
-        incomingMsg := &NetMessage{}
-        decoder.Decode(incomingMsg)
+	server := new(Server)
+	server.game = newGame
+	server.game.Teams = []*game.Team{}
+	server.game.Teams = append(server.game.Teams, new(game.Team))
+	server.game.Teams = append(server.game.Teams, new(game.Team))
+	fmt.Printf("Added %v new team(s)\n", len(server.game.Teams))
+	// Register the server for Remote Procedure Calls
+	rpc.Register(server)
+	rpc.HandleHTTP()
 
-        // If the NetMessage is not null process the NetMessage and write send response to client
-        if(incomingMsg.Command != "") {
-            returnValue := processCommand(*incomingMsg)
+	// Listen on the RPC port for incoming commands
+	listener, err := net.Listen("tcp", ":" + strconv.Itoa(RPC_PORT))
+	if err != nil {
+		panic(err)
+	}
 
-            conn.Write([]byte(returnValue))
-        }
+	go http.Serve(listener, nil)
 
-    }
+	for server.game.Live {
 
-    conn.Close()
+	}
+
 }
 
-func processCommand(incomingMsg NetMessage) string {
-    fmt.Printf("NetMessage: %v\n", incomingMsg.Command)
+func (t *Server) DoubleNum(num int, result *int) error {
+	*result = num *2
+	return nil
+}
 
-    return "Miss! Try again"
+// JoinGame joins a Player to the running Server
+func (t *Server) JoinGame(username string, player *game.Player) error {
+
+	player, err := t.game.GetSmallestTeam().NewPlayer(username)
+
+	fmt.Printf("New player joined: %v [%#v]\n", username, player)
+	fmt.Printf("\tPlayer ID: %v\n", &player)
+	fmt.Printf("\tAssigned to team %#v\n", player.Team)
+
+	return err
 }
