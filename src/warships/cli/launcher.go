@@ -21,7 +21,7 @@ var logo = `
 
 
 
-
+// main Launches the game into the main menu, showing logo, credits and initial options
 func main() {
 
 	clearScreen()
@@ -38,7 +38,7 @@ func main() {
 
 }
 
-
+// startServer shows the menu screen for starting a new server
 func startServer() {
 
 	const PASSWRD		= "Password"
@@ -87,6 +87,7 @@ func startServer() {
 	// Proceed to game
 }
 
+// joinGame shows the menu screen for joining a running game server
 func joinGame() {
 
 	const SERV_ADDR = "Server Address"
@@ -96,12 +97,28 @@ func joinGame() {
 	setupScreen()
 
 
-	options := inputOptions(
-		"Joining Game",
-					SERV_ADDR,
-					PASSWRD,
-					USERNAME,
-					)
+	success := false
 
-	net.JoinServer(strings.TrimRight(options[USERNAME], "\n"), options[SERV_ADDR])
+	for !success {
+		options := inputOptions(
+			"Joining Game",
+			SERV_ADDR,
+			PASSWRD,
+			USERNAME,
+		)
+
+		playerId, err := net.JoinServer(
+			strings.TrimRight(options[USERNAME], "\n"),
+			strings.TrimRight(options[PASSWRD], "\n"),
+			options[SERV_ADDR])
+		if err == nil {
+			success = true
+			net.AcceptCommands(playerId, options[SERV_ADDR])
+		} else {
+
+			print(err)
+		}
+	}
+
+
 }

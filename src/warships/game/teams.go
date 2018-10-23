@@ -2,16 +2,16 @@ package game
 
 import (
 	"crypto/md5"
+	"errors"
 	"fmt"
 	"io"
 	"math"
-	"time"
 )
-
+// Player represents a single human user connected to game
 type Player struct {
 
 	Username string
-	Score    int
+	Password string
 
 	// Pointer to Team this player is on
 	Team *Team
@@ -20,7 +20,10 @@ type Player struct {
 
 }
 
+// Team is a collection of Players working together on the same team
 type Team struct {
+
+	Name 		string
 
 	Game *Game
 
@@ -40,6 +43,8 @@ type Team struct {
 
 }
 
+// GetSmallestTeam when called on a Game returns the Team in the game with
+// the least userse
 func (game *Game) GetSmallestTeam() *Team {
 
 	var smallestTeam *Team
@@ -56,46 +61,75 @@ func (game *Game) GetSmallestTeam() *Team {
 
 }
 
-// Adds a new Player to a Team, returns pointer to new Player
+// Adds a new Player to a Game, returns pointer to new Player
 // This should be used to instantiate a new Player
-func (team *Team) NewPlayer (username string) (*Player, error) {
+func (game *Game) Join (username, password string) (*Player, bool, error) {
 
-	// Generate New Player ID
-	h := md5.New()
-	seed := username + time.Now().String()
-	io.WriteString(h, seed)
-	id := fmt.Sprintf("%x", h.Sum(nil))
+	// Generate ID based on Username
+	id := RandomId(username, 32)
 
-	// Create new player
-	newPlayer := Player{username, 0, team, id}
+	// Check to see if that user is already registered in this Game
+	// If not register the user
+	player := game.GetPlayerById(id)
+	if player == nil {
 
-	// Add reference to player to Team.Players array
-	team.Players = append(team.Players, &newPlayer)
+		team := game.GetSmallestTeam()
 
-	// Increment number of Players on Team
-	team.NumPlayers += 1
+		// Create new player
+		newPlayer := Player{username, password, team, id}
 
+		// Add reference to player to Team.Players array
+		team.Players = append(team.Players, &newPlayer)
 
-	return &newPlayer, nil
+		// Increment number of Players on Team
+		team.NumPlayers += 1
+
+		return &newPlayer, false, nil
+
+	} else {
+		// If Player already exists check the password
+		if password == player.Password {
+			return player, true, nil
+		} else {
+			return nil, true, errors.New("Incorrect password")
+		}
+	}
 
 }
 
-// Instantiates a new Team
+func RandomId(input string, length int) string {
+	// Generate random ID
+	h := md5.New()
+	seed := input
+	io.WriteString(h, seed)
+	id := fmt.Sprintf("%x", h.Sum(nil))
+	return id[:length]
+}
+
+// NewTeam Instantiates a new Team
 func (game *Game) NewTeam() *Team {
-	team := Team{ game,
-	make([]*Player, 20),
+
+
+
+	team := Team{
+	"",
+	game,
+	[]*Player{},
 	0,
 	[]Target{},
 	[]Target{},
 	[]*Ship{},
 	}
 
+	teamId := fmt.Sprintf("%p", &team)
+	team.Name = fmt.Sprintf("Team-%v", RandomId(teamId, 5))
+
 	game.Teams = append(game.Teams, &team)
 
 	return &team
 }
 
-// Find and return a Player using their Player ID
+// GetPlaerById finds and return a Player using their Player ID
 func (game *Game) GetPlayerById(id string) *Player {
 	var result *Player = nil
 
@@ -113,7 +147,7 @@ func (game *Game) GetPlayerById(id string) *Player {
 	return result
 }
 
-// Switches a Players Team
+// SwitchTeam switches a Players Team
 func SwitchTeam(player *Player, destTeam *Team) {
 
 	// Get the Players original Team
@@ -137,7 +171,7 @@ func SwitchTeam(player *Player, destTeam *Team) {
 
 }
 
-// Find the index of Player in a Teams Player array
+// findPlayerIndex finds the index of Player in a Teams Player array
 func (team Team) findPlayerIndex(player *Player) int {
 	playerList := team.Players
 
@@ -149,25 +183,3 @@ func (team Team) findPlayerIndex(player *Player) int {
 
 	return -1
 }
-/*
-
-func main() {
-
-	Team := NewTeam()
-	otherTeam := NewTeam()
-
-	fmt.Printf("Original\nTeam 1: %X\nTeam 2: %X\n\n", Team, otherTeam)
-
-	player, _:= (&Team).NewPlayer("Jason")
-
-
-	fmt.Printf("After add player\nTeam 1: %X\nTeam 2: %X\n\n", Team, otherTeam)
-
-	SwitchTeam(player, &otherTeam)
-
-
-	fmt.Printf("After switch player\nTeam 1: %X\nTeam 2: %X\n\n", Team, otherTeam)
-
-	//fmt.Println(Team)
-	//fmt.Println(player)
-}*/

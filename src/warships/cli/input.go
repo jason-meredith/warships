@@ -9,13 +9,19 @@ import (
 	"strings"
 )
 
+// clearScreen clears the screen. Currently only works with linux (linux -> clear, windows -> cls) but
+// I intend to implement that
 func clearScreen() {
-	cmd := exec.Command("clear") //Linux example, its tested
+	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
 	cmd.Run()
 }
 
+// MenuOption is a function representing the action of an inputMenu menu option
 type MenuOption func()
+
+// inputMenu displays a selection of options with corresponding numbers, collects user input, and
+// runs the function associated with the selected Menu option
 func inputMenu(prompt string, options ...MenuOption) {
 	fmt.Println(prompt)
 
@@ -47,6 +53,8 @@ func inputMenu(prompt string, options ...MenuOption) {
 	optionSelection()
 }
 
+// inputOptions collects user text input using an array of string prompts and stores
+// responses in key-value map
 func inputOptions(prompt string, options ...string) map[string]string {
 
 	reader := bufio.NewReader(os.Stdin)
@@ -69,6 +77,7 @@ func inputOptions(prompt string, options ...string) map[string]string {
 	return results
 }
 
+// setupScreen sets up the screen showing credits and the logo
 func setupScreen() {
 	clearScreen()
 	fmt.Println(" ~ By Jason Meredith ~ \n")

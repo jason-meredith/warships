@@ -6,7 +6,12 @@ import (
 	"time"
 )
 
+// Orientation is integer used to represent the Orientation enum options. Represents
+// the direction a Ship is pointing
 type Orientation uint8
+
+// ShotResult is integer used to represent the ShotResult enum options. Represents the
+// result of fired shot
 type ShotResult uint8
 
 const (
@@ -20,16 +25,19 @@ const (
 	MISS
 )
 
+// Target is the human-way of representing a square most similar to the board game (A1 -> Z26)
 type Target struct {
 	X rune
 	Y uint8
 }
 
+// Coordiinate is the actually row/column square
 type Coordinate struct {
 	X uint8
 	Y uint8
 }
 
+// Game represents a running with all Game settings and teams
 type Game struct {
 
 	// As long as this is true server will keep running
@@ -53,6 +61,7 @@ type Game struct {
 
 }
 
+// Ship represents a single ship
 type Ship struct {
 	Team 		*Team
 
