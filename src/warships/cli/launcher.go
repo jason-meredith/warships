@@ -19,15 +19,38 @@ var logo = `
  ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚══════╝
 `
 
-
+/*********************************************************
+ *														 *
+ *                   	  Warships						 *
+ *					   Jason Meredith					 *
+ *														 *
+ *	DATE:		October 22, 2018						 *
+ *	FILE: 		launcher.go								 *
+ *	PURPOSE:	Entry point to the main menu			 *
+ *				 										 *
+ *				The main function loads you into a 		 *
+ *				menu giving you the option of Start 	 *
+ *				Game, Join Game or Quit.				 *
+ *														 *
+ *				Selecting Start Game will launch an		 *
+ *				options menu allowing you to set up		 *
+ *				preferences for the new Game Server.	 *
+ *														 *
+ *				Join Game will prompt you to enter		 *
+ *				server IP Address, Username and Password *
+ *														 *
+ *				Quit will exit the program				 *
+ *														 *
+ *														 *
+ *********************************************************/
 
 // main Launches the game into the main menu, showing logo, credits and initial options
 func main() {
 
 	clearScreen()
-	fmt.Println("~ By Jason Meredith ~ \n")
-	time.Sleep(700 * time.Millisecond)
 	fmt.Println(logo)
+	fmt.Println("\t\t ~ By Jason Meredith ~ \n")
+	time.Sleep(700 * time.Millisecond)
 
 
 
@@ -70,7 +93,7 @@ func startServer() {
 
 	newGame := game.Game{}
 	newGame.Live =          true
-	newGame.Port =          net.CONNECT_PORT
+	newGame.Port =          net.RPC_PORT
 	newGame.Password =      options[PASSWRD]
 	newGame.StartTime =     time.Now()
 	newGame.AdminPassword = options[ADMIN_PASSWRD]
@@ -107,16 +130,17 @@ func joinGame() {
 			USERNAME,
 		)
 
-		playerId, err := net.JoinServer(
+		playerId, connection, err := net.CreateServerConnection(
 			strings.TrimRight(options[USERNAME], "\n"),
 			strings.TrimRight(options[PASSWRD], "\n"),
 			options[SERV_ADDR])
 		if err == nil {
 			success = true
-			net.AcceptCommands(playerId, options[SERV_ADDR])
+			net.AcceptCommands(playerId, connection)
 		} else {
-
-			print(err)
+			fmt.Println("Error: " + err.Error())
+			time.Sleep(700 * time.Millisecond)
+			setupScreen()
 		}
 	}
 

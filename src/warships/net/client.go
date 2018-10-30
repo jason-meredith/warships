@@ -2,6 +2,7 @@ package net
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"net/rpc"
 	"os"
@@ -9,27 +10,40 @@ import (
 	"strings"
 )
 
-type CommandArgs struct {
-	input 		string
-	playerId	string
+/*********************************************************
+ *														 *
+ *                   	  Warships						 *
+ *					   Jason Meredith					 *
+ *														 *
+ *	DATE:		October 22, 2018						 *
+ *	FILE: 		client.go								 *
+ *	PURPOSE:	Handles a client connecting to a server  *
+ *				and all outgoing commands				 *
+ *				 										 *
+ *														 *
+ *********************************************************/
+
+// ClientCommand wraps the PlayerID and command input into a single struct to send to server
+type ClientCommand struct {
+	PlayerId string
+	Fields   []string
 }
 
+// CreateServerConnection takes a username, password and network address and attempts to connect
+// to a Game server running at that location. If a user using that username has never connected
+// to that server before a Player is created on the server with the given username and password.
+//
+// If a Player already exists on that server the password entered must be the password they entered
+// when they first logged in or else they must re-login with a new username/password combo.
+//
+// Upon successful login a string (their UserID) and the RPC Client object are returned, or an error.
+func CreateServerConnection(username, password, address string) (string, *rpc.Client, error) {
 
-func ConnectToServer(address string) *rpc.Client {
+	// Create connection to server
 	client, err := rpc.DialHTTP("tcp", address + ":" + strconv.Itoa(RPC_PORT))
 	if err != nil {
-		panic(err)
+		return "", nil, errors.New("unable to connect to that address")
 	}
-
-	return client
-}
-
-
-// JoinServer takes a username and ip address and attempts to connect to running server
-// create a new Player on that server and returns the ID of that new Player
-func JoinServer(username, password, address string) (string, error) {
-
-	client := ConnectToServer(address)
 
 	login := LoginCredentials{
 		Username:username,
@@ -38,23 +52,25 @@ func JoinServer(username, password, address string) (string, error) {
 
 	var details JoinDetails
 
-	err := client.Call("Server.JoinGame", &login, &details)
+	err = client.Call("Server.JoinGame", &login, &details)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 
 	fmt.Printf("Joined Game with ID %v\n", details.PlayerId)
 	fmt.Printf("Assigned to team: %v\n", details.TeamName)
 
-	return details.PlayerId, nil
+	return details.PlayerId, client, nil
 
 }
 
-func AcceptCommands(playerId string, address string) {
+// AcceptCommands takes a the UserID and RPC Client object and prompts the user for
+// keyboard input. If the first token of the input matches a key in hashmap of commands
+// their UserID and full input are sent to the server wrapped in ClientCommand struct.
+// Response string from server is printed to screen.
+func AcceptCommands(playerId string, connection *rpc.Client) {
 
-	// Get a connection to the server
-	client := ConnectToServer(address)
 
 	reader := bufio.NewReader(os.Stdin)
 	var input string
@@ -82,14 +98,17 @@ func AcceptCommands(playerId string, address string) {
 		input 		= strings.TrimRight(input, "\n")
 		fields 		:= strings.Fields(input)
 
+		// If the first field in the input matches a key in the commands hashmap
 		if _, ok := commands[fields[0]]; ok {
 			var response string
 
-			command := ClientCommand{PlayerId:playerId, Fields: fields }
+			// Wrap command in ClientCommand struct
+			command := ClientCommand{ PlayerId: playerId, Fields: fields }
 
-			err := client.Call(commands[fields[0]], &command, &response)
+			// Send ClientCommand to Server and print response
+			err := connection.Call(commands[fields[0]], &command, &response)
 			if err != nil {
-				panic(err)
+				fmt.Println("Error: " + err.Error())
 			}
 
 			fmt.Println(response)
@@ -99,3 +118,5 @@ func AcceptCommands(playerId string, address string) {
 
 	}
 }
+
+

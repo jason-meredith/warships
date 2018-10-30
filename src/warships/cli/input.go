@@ -9,6 +9,24 @@ import (
 	"strings"
 )
 
+/*********************************************************
+ *														 *
+ *                   	  Warships						 *
+ *					   Jason Meredith					 *
+ *														 *
+ *	DATE:		October 22, 2018						 *
+ *	FILE: 		input.go								 *
+ *	PURPOSE:	Provides helper functions for the menu	 *
+ *				such as clearing the screen, displaying  *
+ *				multi-option menus and parsing the 		 *
+ *				response, as well as collecting info	 *
+ *				in a form style input with multiple		 *
+ *				fields									 *
+ *				 										 *
+ *														 *
+ *														 *
+ *********************************************************/
+
 // clearScreen clears the screen. Currently only works with linux (linux -> clear, windows -> cls) but
 // I intend to implement that
 func clearScreen() {
@@ -80,6 +98,6 @@ func inputOptions(prompt string, options ...string) map[string]string {
 // setupScreen sets up the screen showing credits and the logo
 func setupScreen() {
 	clearScreen()
-	fmt.Println(" ~ By Jason Meredith ~ \n")
 	fmt.Println(logo)
+	fmt.Println("\t\t ~ By Jason Meredith ~ \n")
 }

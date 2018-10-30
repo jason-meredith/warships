@@ -1,0 +1,41 @@
+body {
+    background: black;
+    color: white;
+}
+.jumbotron {
+    background: white;
+    color: black;
+}
+#logo {
+    margin-left:auto;
+    margin-right:auto;
+}
+
+
+h1 {
+    font-family: 'Roboto Mono', monospace;
+    margin-bottom: 40px;
+}
+
+p {
+    font-family: 'Roboto', sans-serif;
+}
+
+a {
+    color: white;
+    text-underline-style: dash;
+    text-underline: white;
+
+}
+
+a:hover {
+    color:white;
+    text-underline-style: single;
+    text-underline: white;
+}
+
+a:visited {
+    color:white;
+    text-underline-style: dash;
+    text-underline: white;
+}

@@ -6,6 +6,23 @@ import (
 	"time"
 )
 
+/*********************************************************
+ *														 *
+ *                   	  Warships						 *
+ *					   Jason Meredith					 *
+ *														 *
+ *	DATE:		October 22, 2018						 *
+ *	FILE: 		game.go								 	 *
+ *	PURPOSE:	Contains all the actual game logic, all	 *
+ *				networking and player-management issues	 *
+ *				aside. Calculating hits/misses, firing	 *
+ *				shots, determining Ship health is all	 *
+ *				found here.								 *
+ *														 *
+ *				 										 *
+ *														 *
+ *********************************************************/
+
 // Orientation is integer used to represent the Orientation enum options. Represents
 // the direction a Ship is pointing
 type Orientation uint8
@@ -14,11 +31,14 @@ type Orientation uint8
 // result of fired shot
 type ShotResult uint8
 
+// Orientation is the direction a Ship is pointing towards
 const (
 	VERTICAL Orientation = iota
 	HORIZONTAL
 )
 
+// ShotResult is the result of a shot, a Hit if it hits a Ship, a miss if it doesn't and
+// a Sink if it was a killing Hit
 const (
 	SINK ShotResult = iota
 	HIT
@@ -31,7 +51,7 @@ type Target struct {
 	Y uint8
 }
 
-// Coordiinate is the actually row/column square
+// Coordinate is the actually row/column square
 type Coordinate struct {
 	X uint8
 	Y uint8
@@ -141,11 +161,13 @@ func CheckLocation(targetTeam *Team, target Coordinate) *Ship {
 	return nil
 }
 
+// ProduceHitBitmask creates a bitfield of all ones, except for a single zero at the offset position.
+// This bitmask & ship.health will zero the bit at the offset.
 func ProduceHitBitmask(offset uint8) uint8 {
 	return uint8(255 - int(math.Pow(2, float64(8-offset-1))))
 }
 
-// hit marks a hit on the Ship and returns either HIT if the Ship is still alive or SINK if dead
+// Hit marks a hit on the Ship and returns either HIT if the Ship is still alive or SINK if dead
 func (ship *Ship) Hit(coordinate Coordinate) ShotResult {
 
 	var offset uint8
