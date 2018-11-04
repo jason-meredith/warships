@@ -84,6 +84,7 @@ func AcceptCommands(playerId string, connection *rpc.Client) {
 	commands["map"]			= "Server.Map"		// Show team map
 	commands["radar"]		= "Server.Radar"	// Show shots fired on enemy map
 	commands["players"]		= "Server.Players"	// Show the player list
+	commands["teams"]		= "Server.Teams"	// Show the teams list
 
 	for {
 

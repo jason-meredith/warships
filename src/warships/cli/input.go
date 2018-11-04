@@ -89,7 +89,8 @@ func inputOptions(prompt string, options ...string) map[string]string {
 
 	for _, option := range options {
 		fmt.Printf("%-20s\t", option)
-		results[option], _ = reader.ReadString('\n')
+		rawInput, _ := reader.ReadString('\n')
+		results[option] = strings.TrimRight(rawInput, "\n")
 	}
 
 	return results

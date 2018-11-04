@@ -69,13 +69,35 @@ func StartGameServer(newGame *game.Game) {
 
 	timeStamp()
 	fmt.Println("Starting Server")
+	fmt.Printf("\t-Listening on port %d\n", newGame.Port)
+	fmt.Printf("\t-Max Players: %d\n", newGame.MaxPlayers)
+	fmt.Printf("\t-Ship Limit: %d\n", newGame.ShipLimit)
+	fmt.Printf("\t-Board Size: %d\n", newGame.BoardSize)
 
 	// Create the Server object using the Game generated and passed to us by the CLI
 	server := new(Server)
 	server.game = newGame
 	server.game.Teams = []*game.Team{}
+	team := server.game.NewTeam()
 	server.game.NewTeam()
-	server.game.NewTeam()
+
+
+	//TODO///////////////////  SHIP TEST DELEEEEETE
+
+
+	ship, _ := team.NewShip(5, game.HORIZONTAL, game.Coordinate{2,2})
+	ship.Hit(game.Coordinate{3, 2})
+
+	ship2, _ := team.NewShip(5, game.VERTICAL, game.Coordinate{2,4})
+	ship2.Hit(game.Coordinate{2, 7})
+	ship2.Hit(game.Coordinate{2, 6})
+
+	fmt.Printf("%#v\n", ship)
+	fmt.Printf("%#v\n", ship2)
+
+
+
+	//TODO//////////////////////////////////////////
 
 	// Register the server for Remote Procedure Calls
 	rpc.Register(server)
@@ -156,3 +178,63 @@ func (t *Server) EchoTest(args ClientCommand, response *string) error {
 	return nil
 
 }
+
+func (t *Server) Map(args ClientCommand, response *string) error {
+
+	// Get the Team Map based on the Player who called the command
+	player := t.game.GetPlayerById(args.PlayerId)
+	teamMap := t.game.GetMap(player.Team)
+
+	// Parse full command to determine section of map to render
+
+	// Produce a string and put in response
+	output := ""
+
+	for y:= 0; y < int(t.game.BoardSize); y++ {
+		output += fmt.Sprintf("%3v ", strconv.Itoa(y))
+		for x:= 0; x < int(t.game.BoardSize); x++ {
+			output += teamMap[x][y]
+		}
+		output += "\n"
+	}
+
+	*response = output
+
+	timeStamp()
+	fmt.Printf("Map Request\n")
+	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
+
+
+	return nil
+}
+
+// Teams serves a list of all the Teams playing on this server, with a * in front
+// of the calling Player's Team
+func (t *Server) Teams(args ClientCommand, response *string) error {
+	output := ""
+
+	player := t.game.GetPlayerById(args.PlayerId)
+
+	for id, team := range t.game.Teams {
+		var strId string = ""
+
+		if player.Team == team {
+			strId = fmt.Sprintf("*%v", id + 1)
+		} else {
+			strId = fmt.Sprintf("%v", id + 1)
+		}
+
+		output += fmt.Sprintf("%3v:\t%v\n", strId, team.Name)
+	}
+
+	*response = output
+
+
+	timeStamp()
+	fmt.Printf("Team List Request\n")
+	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
+
+	return nil
+}
+
+// Target fires a shot

@@ -239,3 +239,69 @@ func TestProduceHitBitmask(t *testing.T) {
 		t.Error("Not producing proper bitmask")
 	}
 }
+
+func TestShip_GetOffset(t *testing.T) {
+
+	team := SetupTeam()
+
+	// New Ship details
+	size := uint8(5);
+	orientation := VERTICAL;
+	location := Coordinate{ 0, 0}
+
+
+	testShip, _ := team.NewShip(size, orientation, location);
+
+	if testShip.GetOffset(Coordinate{0, 3}) != 3 {
+		t.Error("Offset not working properly")
+	}
+}
+
+func TestTeam_ShipCoordinates(t *testing.T) {
+	team := SetupTeam()
+
+	// New Ship details
+	size := uint8(5);
+	orientation := VERTICAL;
+	location := Coordinate{ 0, 0}
+
+
+	team.NewShip(size, orientation, location);
+	team.NewShip(size, orientation, Coordinate{ 1, 0});
+
+	coords := []ShipCoord{}
+
+	for shipCoord := range team.ShipCoordinates() {
+		coords = append(coords, shipCoord)
+	}
+
+	if len(coords) != 10 {
+		t.Error("ShipCoordinates not returned the proper number of ShipCoords")
+	}
+
+	expectedResults := []Coordinate{
+		{0, 0},
+		{0, 1},
+		{0, 2},
+		{0, 3},
+		{0, 4},
+		{1, 0},
+		{1, 1},
+		{1, 2},
+		{1, 3},
+		{1, 4},
+	}
+
+	matches := true
+
+	for i, actual := range coords {
+		if expectedResults[i] != actual.coord {
+			matches = false;
+		}
+	}
+
+	if matches == false {
+		t.Error("Does not match expected results")
+	}
+
+}

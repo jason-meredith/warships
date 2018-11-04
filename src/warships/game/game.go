@@ -23,6 +23,15 @@ import (
  *														 *
  *********************************************************/
 
+// ICON_ALIVE is the icon represent a portion of a ship that has not been hit
+const ICON_ALIVE = '+'
+
+// ICON_DEAD is the icon represent a portion of a ship that has been hit
+const ICON_DEAD = '@'
+
+// ICON_MISS is the icon representing a missed attempted attack on a team map
+const ICON_MISS = '*'
+
 // Orientation is integer used to represent the Orientation enum options. Represents
 // the direction a Ship is pointing
 type Orientation uint8
@@ -167,9 +176,9 @@ func ProduceHitBitmask(offset uint8) uint8 {
 	return uint8(255 - int(math.Pow(2, float64(8-offset-1))))
 }
 
-// Hit marks a hit on the Ship and returns either HIT if the Ship is still alive or SINK if dead
-func (ship *Ship) Hit(coordinate Coordinate) ShotResult {
-
+// GetOffset returns the number of squares a coordinate is away from the "location" of this
+// ship
+func (ship *Ship) GetOffset(coordinate Coordinate) uint8 {
 	var offset uint8
 
 	if ship.Orientation == VERTICAL {
@@ -178,6 +187,14 @@ func (ship *Ship) Hit(coordinate Coordinate) ShotResult {
 	} else {
 		offset = coordinate.X - ship.Location.X
 	}
+
+	return offset
+}
+
+// Hit marks a hit on the Ship and returns either HIT if the Ship is still alive or SINK if dead
+func (ship *Ship) Hit(coordinate Coordinate) ShotResult {
+
+	offset := ship.GetOffset(coordinate)
 
 	bitmask :=  ProduceHitBitmask(offset)
 
@@ -245,4 +262,110 @@ func (team *Team) NewShip(size uint8, orientation Orientation, coordinate Coordi
 // GetHealthBitfield returns a bitfield representing the Ship and thats parts of it that are hit and unscathed.
 func GetHealthBitfield(size uint8) uint8 {
 	return (uint8(math.Pow(2, float64(size))) - 1) << (8 - size)
+}
+
+
+// BoardCoordinates creates an iterator that iterates over ever Coordinate of the Board
+func (game *Game) BoardCoordinates() <-chan Coordinate {
+
+	channel := make(chan Coordinate)
+
+	go func() {
+
+		var x, y uint8
+
+		// Iterate over each grid pair the
+		for x = 0; x < game.BoardSize; x ++ {
+			for y = 0; y < game.BoardSize; y ++ {
+				channel <- Coordinate{x, y}
+			}
+		}
+
+		close(channel)
+	}()
+
+	return channel
+}
+
+// ShipIcon returns, given a Ship and a coordinate, what icon should be
+// displayed at this  coordinate?
+func (ship *Ship) ShipIcon(coordinate Coordinate) rune {
+	health := ship.Health
+	offset := ship.GetOffset(coordinate)
+
+	var icon rune
+
+	// ProduceHitBitmask will produced a binary of all 1s except at the offset
+	// Ex: 3 -> 11111011
+	// I will use the complement (0000 0100) to see if there is a 1 or a 0 at
+	// that position in the Health value (1111 1111)&(0000 0100) = that spot
+	// is alive, (1111 1011)&(0000 0100) = that spot is dead
+	if health & ^ProduceHitBitmask(offset) > 0 {
+		icon = ICON_ALIVE
+	} else {
+		icon = ICON_DEAD
+	}
+
+	return icon
+}
+
+type ShipCoord struct {
+	ship 	*Ship
+	coord 	Coordinate
+	icon 	rune
+}
+
+// ShipCoordinates creates an iterator that iterates through the Coordinates
+// of all the ship on a Team. It uses the channel iterator pattern, meaning
+// it creates a Goroutine that loops through all the values and pushes them
+// into a channel to be consumed in the main thread
+func (team *Team) ShipCoordinates() chan ShipCoord {
+	channel := make(chan ShipCoord)
+
+	go func() {
+		defer close(channel)
+
+		// Loop over each ship the belongs to this team
+		for _, ship := range team.Ships {
+			// Loop over each coordinate of each ship
+			for _, coord := range ship.GetOccupyingSpaces() {
+
+				shipCoord := ShipCoord{
+					ship: ship,
+					coord: coord,
+					icon: ship.ShipIcon(coord),
+				}
+
+				channel <- shipCoord
+			}
+		}
+
+	}()
+
+	return channel
+}
+
+func (game *Game) GetMap(team *Team) [][]string {
+
+	boardSize := game.BoardSize
+
+
+	board := make([][] string, boardSize)
+	for x := 0; x < int(boardSize); x++ {
+		board[x] = make([] string, boardSize)
+	}
+
+	// Initialize grid with spaces
+	for coord := range game.BoardCoordinates() {
+		board[coord.X][coord.Y] = "_|"
+	}
+
+	// Add in our ships
+	for shipCoord := range team.ShipCoordinates() {
+		board[shipCoord.coord.X][shipCoord.coord.Y] = string(shipCoord.icon) + "|"
+	}
+
+
+	return board
+
 }

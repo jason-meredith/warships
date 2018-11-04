@@ -82,13 +82,12 @@ func startServer() {
 					ADMIN_PASSWRD,
 		)
 
-	fmt.Printf("%v", options)
-
 	maxPlayers, err := strconv.Atoi(options[MAX_PLAYERS])
 	shipLimit, err := strconv.Atoi(options[SHIP_LIMIT])
 	boardSize, err := strconv.Atoi(options[BOARD_SIZE])
+
 	if err != nil {
-		// Handle this error pls
+		// TODO: Handle this error pls
 	}
 
 	newGame := game.Game{}
