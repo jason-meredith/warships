@@ -37,6 +37,8 @@ type Player struct {
 
 	Id 		string
 
+	Score	int
+
 }
 
 // Team is a collection of Players working together on the same team
@@ -95,7 +97,7 @@ func (game *Game) Join (username, password string) (*Player, bool, error) {
 		team := game.GetSmallestTeam()
 
 		// Create new player
-		newPlayer := Player{username, password, team, id}
+		newPlayer := Player{username, password, team, id, 0}
 
 		// Add reference to player to Team.Players array
 		team.Players = append(team.Players, &newPlayer)

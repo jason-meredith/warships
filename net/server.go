@@ -1,6 +1,7 @@
 package net
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -149,9 +150,9 @@ func (t *Server) JoinGame(login LoginCredentials, info *JoinDetails) error {
 	// Print details about this incoming command to the log
 	timeStamp()
 	if !existing {
-		fmt.Printf("New player joined: %v\n", login.Username)
+		fmt.Printf("New player connected: %v\n", login.Username)
 	} else {
-		fmt.Printf("Existing player rejoined: %v\n", login.Username)
+		fmt.Printf("Existing player reconnected: %v\n", login.Username)
 	}
 	fmt.Printf("\t-Player ID: %v\n", info.PlayerId)
 	fmt.Printf("\t-Assigned to team %v (%p)\n", info.TeamName, player.Team)
@@ -233,6 +234,34 @@ func (t *Server) Teams(args ClientCommand, response *string) error {
 	timeStamp()
 	fmt.Printf("Team List Request\n")
 	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
+
+	return nil
+}
+
+// Players serves a list of Players on a given team# (team# based on Teams command)
+func (t *Server) Players(args ClientCommand, response *string) error {
+	output := ""
+
+	teamNum, err := strconv.Atoi(args.Fields[1])
+	if err != nil {
+		return errors.New("Team selection invalid")
+	}
+
+	if teamNum < 1 || teamNum > len(t.game.Teams) {
+		return errors.New("Team selection out of range")
+
+	}
+
+	team := t.game.Teams[teamNum - 1]
+
+	output += fmt.Sprintf("\n%v [ %v player(s) ]\n", team.Name, team.NumPlayers)
+	output += fmt.Sprintf("%8v %-20v\n", "Score", "Username")
+
+	for _, player := range team.Players {
+		output += fmt.Sprintf("%8v %-20v\n", player.Score, player.Username )
+	}
+
+	*response = output
 
 	return nil
 }
