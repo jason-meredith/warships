@@ -37,7 +37,10 @@ type Player struct {
 
 	Id 		string
 
-	Score	int
+	Points int
+
+	// How many hits this player has gotten in a row
+	HitStreak int
 
 }
 
@@ -97,7 +100,7 @@ func (game *Game) Join (username, password string) (*Player, bool, error) {
 		team := game.GetSmallestTeam()
 
 		// Create new player
-		newPlayer := Player{username, password, team, id, 0}
+		newPlayer := Player{username, password, team, id, 0, 0}
 
 		// Add reference to player to Team.Players array
 		team.Players = append(team.Players, &newPlayer)

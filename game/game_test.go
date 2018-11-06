@@ -85,6 +85,16 @@ func TestTeam_NewShip(t *testing.T) {
 	})
 }
 
+func TestToLetter(t *testing.T) {
+	if ToLetter(0) != 'A' {
+		t.Error("To Letter not producing correct result")
+	}
+
+	if ToLetter(5) != 'F' {
+		t.Error("To Letter not producing correct result")
+	}
+}
+
 func TestShip_GetOccupyingSpaces(t *testing.T) {
 
 	team := SetupTeam()

@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"warships/base26"
 	"warships/game"
 )
 
@@ -79,23 +80,19 @@ func StartGameServer(newGame *game.Game) {
 	server := new(Server)
 	server.game = newGame
 	server.game.Teams = []*game.Team{}
-	team := server.game.NewTeam()
-	server.game.NewTeam()
+	teamA := server.game.NewTeam()
+	teamB := server.game.NewTeam()
 
 
 	//TODO///////////////////  SHIP TEST DELEEEEETE
 
 
-	ship, _ := team.NewShip(5, game.HORIZONTAL, game.Coordinate{2,2})
-	ship.Hit(game.Coordinate{3, 2})
+	teamA.NewShip(5, game.HORIZONTAL, game.Coordinate{2,2})
 
-	ship2, _ := team.NewShip(5, game.VERTICAL, game.Coordinate{2,4})
-	ship2.Hit(game.Coordinate{2, 7})
-	ship2.Hit(game.Coordinate{2, 6})
+	teamA.NewShip(5, game.VERTICAL, game.Coordinate{2,4})
 
-	fmt.Printf("%#v\n", ship)
-	fmt.Printf("%#v\n", ship2)
-
+	teamB.NewShip(5, game.VERTICAL, game.Coordinate{2,2})
+	teamB.NewShip(5, game.HORIZONTAL, game.Coordinate{4,4})
 
 
 	//TODO//////////////////////////////////////////
@@ -189,8 +186,13 @@ func (t *Server) Map(args ClientCommand, response *string) error {
 	// Parse full command to determine section of map to render
 
 	// Produce a string and put in response
-	output := ""
+	output := "  "
 
+	// Top row
+	for x := 0; x <= int(t.game.BoardSize); x++ {
+		output += fmt.Sprintf("%-2v", base26.ConvertToBase26(x))
+	}
+	output += "\n"
 	for y:= 0; y < int(t.game.BoardSize); y++ {
 		output += fmt.Sprintf("%3v ", strconv.Itoa(y))
 		for x:= 0; x < int(t.game.BoardSize); x++ {
@@ -255,10 +257,10 @@ func (t *Server) Players(args ClientCommand, response *string) error {
 	team := t.game.Teams[teamNum - 1]
 
 	output += fmt.Sprintf("\n%v [ %v player(s) ]\n", team.Name, team.NumPlayers)
-	output += fmt.Sprintf("%8v %-20v\n", "Score", "Username")
+	output += fmt.Sprintf("%8v %-20v\n", "Points", "Username")
 
 	for _, player := range team.Players {
-		output += fmt.Sprintf("%8v %-20v\n", player.Score, player.Username )
+		output += fmt.Sprintf("%8v %-20v\n", player.Points, player.Username )
 	}
 
 	*response = output
@@ -267,3 +269,46 @@ func (t *Server) Players(args ClientCommand, response *string) error {
 }
 
 // Target fires a shot
+func (t *Server) Target(args ClientCommand, response *string) error {
+
+	player := t.game.GetPlayerById(args.PlayerId)
+
+	// command structure: 	target [team#] [Target{}]
+	// 						target 2 G7
+
+	if len(args.Fields) < 3 {
+		return errors.New("not enough arguments to perform target command: target <team#> <target_coordinate>")
+	}
+
+	teamNum, err := strconv.Atoi(args.Fields[1])
+	team := t.game.Teams[teamNum - 1]
+	if team == player.Team {
+		return errors.New("you cannot target you're own team")
+	}
+
+	// Parse into Target{} (split letters from numbers)
+	target, err := game.StringToTarget(args.Fields[2])
+	if err != nil {
+		return err
+	}
+
+	output := ""
+
+	shotResult := game.FireShot(player, team, target)
+
+	if shotResult == game.HIT {
+		output += "Shot confirmed HIT!\n"
+		output += fmt.Sprint("%v hit streak\n", player.HitStreak)
+	} else if shotResult == game.REPEAT_HIT {
+		output += "Shot confirmed HIT but no further damage inflicted!\n"
+	} else if shotResult == game.MISS {
+		output += "Shot confirmed MISS!\n"
+	} else if shotResult == game.SINK {
+		output += "Shot confirmed HIT... enemy ship SUNK!\n"
+	}
+
+	*response = output
+
+	return nil
+
+}

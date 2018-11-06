@@ -3,7 +3,10 @@ package game
 import (
 	"errors"
 	"math"
+	"regexp"
+	"strconv"
 	"time"
+	"warships/base26"
 )
 
 /*********************************************************
@@ -23,14 +26,31 @@ import (
  *														 *
  *********************************************************/
 
-// ICON_ALIVE is the icon represent a portion of a ship that has not been hit
-const ICON_ALIVE = '+'
+// Point values
+const (
+	// Points awarded for scoring hit
+	HIT_POINT 			= 8
+	HIT_STREAK_POINT 	= 10
+	SINK_POINT			= 18
+	DISCOVERY_POINT		= 1
 
-// ICON_DEAD is the icon represent a portion of a ship that has been hit
-const ICON_DEAD = '@'
+	DEPLOY_COST			= 50
+	DEPLOY_PER_SQ_COST	= 10
+	MOVE_COST			= 1
+	NEW_TEAM_COST		= 200
+)
 
-// ICON_MISS is the icon representing a missed attempted attack on a team map
-const ICON_MISS = '*'
+// Map icons
+const (
+	// ICON_ALIVE is the icon represent a portion of a ship that has not been hit
+	ICON_ALIVE = '+'
+
+	// ICON_DEAD is the icon represent a portion of a ship that has been hit
+	ICON_DEAD = '@'
+
+	// ICON_MISS is the icon representing a missed attempted attack on a team map
+	ICON_MISS = '*'
+)
 
 // Orientation is integer used to represent the Orientation enum options. Represents
 // the direction a Ship is pointing
@@ -52,11 +72,12 @@ const (
 	SINK ShotResult = iota
 	HIT
 	MISS
+	REPEAT_HIT
 )
 
 // Target is the human-way of representing a square most similar to the board game (A1 -> Z26)
 type Target struct {
-	X rune
+	X string
 	Y uint8
 }
 
@@ -103,13 +124,32 @@ type Ship struct {
 
 }
 
+func StringToTarget(targetString string) (Target, error) {
+
+	var re = regexp.MustCompile(`(?m)^([A-Z]+)([0-9]+)$`)
+
+	tokens := re.FindAllStringSubmatch(targetString, -1)[0]
+
+	if len(tokens) == 0 {
+		return Target{}, errors.New("invalid Target Format (^[A-Z]+[0-9]+$)")
+	}
+
+	x := tokens[1]
+	y, _ := strconv.Atoi(tokens[2])
+
+	return Target{
+		X: x,
+		Y: uint8(y),
+	}, nil
+}
 
 // ToCoordinate converts a Target (base64/number pair ex: B12) to a Coordinate (X,Y pair)
-// TODO: Targets are currently Rune/Int, limited X axis to 26. Make this a base 26 number (A-Z, AA, AB, AC, etc)
 func (target Target) ToCoordinate() Coordinate {
-	x := uint8(target.X - 'A')
+	return Coordinate{ uint8(base26.ConvertToDecimal(target.X)), target.Y}
+}
 
-	return Coordinate{ x, target.Y}
+func (coordinate Coordinate) ToTarget() Target {
+	return Target{base26.ConvertToBase26(int(coordinate.X)), coordinate.Y}
 }
 
 
@@ -127,9 +167,10 @@ func FireShot(player *Player, targetTeam *Team, target Target) ShotResult {
 	// If there is no Ship there, return MISS, otherwise mark a HIT on the Ship
 	// and return what hit() returns (HIT or SINK)
 	if enemyShip == nil {
+		player.HitStreak = 0
 		return MISS
 	} else {
-		return enemyShip.Hit(coordinate)
+		return enemyShip.Hit(player, coordinate)
 	}
 
 }
@@ -191,8 +232,11 @@ func (ship *Ship) GetOffset(coordinate Coordinate) uint8 {
 	return offset
 }
 
-// Hit marks a hit on the Ship and returns either HIT if the Ship is still alive or SINK if dead
-func (ship *Ship) Hit(coordinate Coordinate) ShotResult {
+// Hit marks a hit on the Ship and returns either HIT if the Ship is still alive or SINK if dead. If the hit occurred
+// in a spot on the Ship take has already taken damage, the ship health will remain the same and we return REPEAT_HIT
+func (ship *Ship) Hit(player *Player, coordinate Coordinate) ShotResult {
+
+	originalShipHealth := ship.Health
 
 	offset := ship.GetOffset(coordinate)
 
@@ -200,7 +244,22 @@ func (ship *Ship) Hit(coordinate Coordinate) ShotResult {
 
 	ship.Health = ship.Health & bitmask
 
+	if ship.Health == originalShipHealth {
+		player.HitStreak = 0
+		return REPEAT_HIT
+	}
+
+	if player.HitStreak == 0 {
+		player.Points += HIT_POINT
+	} else {
+		player.Points += HIT_STREAK_POINT
+	}
+
+	player.HitStreak++
+
+
 	if ship.Health == 0  {
+		player.Points += SINK_POINT
 		return SINK
 	}
 

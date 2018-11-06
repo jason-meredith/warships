@@ -4,14 +4,17 @@ import (
 	"math"
 )
 
+// ToLetter converts an int to a single letter character
 func ToLetter(input int) rune {
-	return rune(input + 'A')
+	return rune(input + 'A' - 1)
 }
 
+// ToNumber converts a single letter character into a number
 func ToNumber(input rune) int {
 	return int(input - 'A')
 }
 
+// ConvertToBase26
 func ConvertToBase26(input int) string {
 
 	results := make([]rune, 0)
