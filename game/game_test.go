@@ -1,6 +1,8 @@
 package game
 
 import (
+	"fmt"
+	"math"
 	"testing"
 )
 
@@ -84,7 +86,7 @@ func TestTeam_NewShip(t *testing.T) {
 
 	})
 }
-
+/* TODO move to base64 test
 func TestToLetter(t *testing.T) {
 	if ToLetter(0) != 'A' {
 		t.Error("To Letter not producing correct result")
@@ -93,7 +95,7 @@ func TestToLetter(t *testing.T) {
 	if ToLetter(5) != 'F' {
 		t.Error("To Letter not producing correct result")
 	}
-}
+}*/
 
 func TestShip_GetOccupyingSpaces(t *testing.T) {
 
@@ -168,6 +170,7 @@ func TestShip_Hit(t *testing.T) {
 
 	team := SetupTeam()
 
+
 	// New Ship details
 	size := uint8(5);
 	orientation := VERTICAL;
@@ -177,7 +180,7 @@ func TestShip_Hit(t *testing.T) {
 	testShip, _ := team.NewShip(size, orientation, location);
 
 	// Bitmask: 0111 1111 & 1111 1000 -> 0111 1000 (120)
-	result := testShip.Hit(Coordinate{0, 0})
+	result := testShip.Hit(nil, Coordinate{0, 0})
 	if testShip.Health != 120 {
 		t.Error("Health not depleted as expected")
 	}
@@ -187,25 +190,25 @@ func TestShip_Hit(t *testing.T) {
 	}
 
 	// Bitmask: 1011 1111 & 0111 1000 -> 0011 1000 (56)
-	testShip.Hit(Coordinate{0, 1})
+	testShip.Hit(nil, Coordinate{0, 1})
 	if testShip.Health != 56 {
 		t.Error("Health not depleted as expected")
 	}
 
 	// Bitmask: 1101 1111 & 0011 1000 -> 0001 1000 (24)
-	testShip.Hit(Coordinate{0, 2})
+	testShip.Hit(nil, Coordinate{0, 2})
 	if testShip.Health != 24 {
 		t.Error("Health not depleted as expected")
 	}
 
 	// Bitmask: 1110 1111 & 0001 1000 -> 0000 1000 (8)
-	testShip.Hit(Coordinate{0, 3})
+	testShip.Hit(nil, Coordinate{0, 3})
 	if testShip.Health != 8 {
 		t.Error("Health not depleted as expected")
 	}
 
 	// Bitmask: 1111 0111 & 0000 0000 -> 0000 0000 (0)
-	result = testShip.Hit(Coordinate{0, 4})
+	result = testShip.Hit(nil, Coordinate{0, 4})
 	if testShip.Health != 0  {
 		t.Error("Health not depleted as expected")
 	}
@@ -314,4 +317,80 @@ func TestTeam_ShipCoordinates(t *testing.T) {
 		t.Error("Does not match expected results")
 	}
 
+}
+
+func TestStringToTarget(t *testing.T) {
+	testStrA := "A0"
+	testStrB := "ZZ50"
+	testStrC := "12F"
+
+	testTargetA, err := StringToTarget(testStrA)
+	if testTargetA.X != "A" || testTargetA.Y != 0 {
+		t.Error("String not parsing correctly")
+	}
+
+	testTargetB, err := StringToTarget(testStrB)
+	if testTargetB.X != "ZZ" || testTargetB.Y != 50 {
+		t.Error("Multi-letter String not parsing correctly")
+	}
+
+	if err != nil {
+		t.Error("Error being thrown when it shouldn't be")
+	}
+
+	_, err = StringToTarget(testStrC)
+	if err == nil {
+		t.Error("Lower case letters should throw error")
+	}
+}
+
+func TestTarget_ToCoordinate(t *testing.T) {
+	testTargetA := Target{"A", 0}
+	testTargetB := Target{"BA", 30}
+
+	testCoordinateA := testTargetA.ToCoordinate()
+	if testCoordinateA.X != 0 || testCoordinateA.Y != 0 {
+		t.Error("Target not converting to Coordinate properly")
+	}
+
+	testCoordinateB := testTargetB.ToCoordinate()
+	fmt.Println(testCoordinateB)
+	zz := (1 * math.Pow(25, 1)) + (1 * math.Pow(25, 0))
+	fmt.Println(zz)
+
+	if testCoordinateB.X != uint8(zz) || testCoordinateB.Y != 30 {
+		t.Error("Target not converting to Coordinate property")
+	}
+}
+
+func TestFireShot(t *testing.T) {
+
+	team := SetupTeam()
+	enemyTeam := team.Game.NewTeam()
+
+	player, _, _ := team.Game.Join("j", "h")
+
+	// New Ship details
+	size := uint8(5);
+	orientation := VERTICAL;
+	location := Coordinate{ 0, 0}
+
+	enemyTeam.NewShip(size, orientation, location);
+
+	testMiss :=  FireShot(player, enemyTeam, Target{"Z", 10})
+	testHit  :=  FireShot(player, enemyTeam, Target{"A", 1})
+	testReHit := FireShot(player, enemyTeam, Target{"A", 1})
+
+	// Fire test shots
+	if testMiss != MISS {
+		t.Error("FireShot should have MISSed")
+	}
+
+	if testHit != HIT {
+		t.Error("FireShot should have HIT")
+	}
+
+	if testReHit != REPEAT_HIT {
+		t.Error("FireShot should have REPEAT_HIT")
+	}
 }

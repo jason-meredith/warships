@@ -85,6 +85,8 @@ func AcceptCommands(playerId string, connection *rpc.Client) {
 	commands["radar"]		= "Server.Radar"	// Show shots fired on enemy map
 	commands["players"]		= "Server.Players"	// Show the player list
 	commands["teams"]		= "Server.Teams"	// Show the teams list
+	commands["shutdown"]	= "Server.Shutdown" // Shutdown server
+	commands["deploy"]		= "Server.Deploy"	// Deploy a new ship
 
 	for {
 
@@ -110,6 +112,7 @@ func AcceptCommands(playerId string, connection *rpc.Client) {
 			err := connection.Call(commands[fields[0]], &command, &response)
 			if err != nil {
 				fmt.Println("Error: " + err.Error())
+
 			}
 
 			fmt.Println(response)

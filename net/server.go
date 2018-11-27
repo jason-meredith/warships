@@ -177,6 +177,69 @@ func (t *Server) EchoTest(args ClientCommand, response *string) error {
 
 }
 
+func PrintMap(boardSize uint8, icon func(x, y int) string) string {
+	// Produce a string and put in response
+	output := "  "
+
+	// Top row
+	for x := 0; x <= int(boardSize); x++ {
+		output += fmt.Sprintf("%-2v", base26.ConvertToBase26(x))
+	}
+	output += "\n"
+	for y:= 0; y < int(boardSize); y++ {
+		output += fmt.Sprintf("%3v ", strconv.Itoa(y))
+		for x:= 0; x < int(boardSize); x++ {
+			output += icon(x, y)
+		}
+		output += "\n"
+	}
+
+	return output
+}
+
+
+func (t *Server) Map(args ClientCommand, response *string) error {
+
+	// Get the Team Map based on the Player who called the command
+	player := t.game.GetPlayerById(args.PlayerId)
+	teamMap := t.game.GetMap(player.Team)
+
+	// Parse full command to determine section of map to render
+
+	*response = PrintMap(t.game.BoardSize, func(x, y int) string {
+		return teamMap[x][y]
+	})
+
+	timeStamp()
+	fmt.Printf("Map Request\n")
+	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
+
+
+	return nil
+}
+
+
+func (t *Server) Radar(args ClientCommand, response *string) error {
+
+	// Get the Team Map based on the Player who called the command
+	player := t.game.GetPlayerById(args.PlayerId)
+	teamMap := t.game.GetRadar(player.Team)
+
+	// Parse full command to determine section of map to render
+
+	*response = PrintMap(t.game.BoardSize, func(x, y int) string {
+		return teamMap[x][y]
+	})
+
+	timeStamp()
+	fmt.Printf("Radar Request\n")
+	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
+
+
+	return nil
+}
+
+/*
 func (t *Server) Map(args ClientCommand, response *string) error {
 
 	// Get the Team Map based on the Player who called the command
@@ -209,7 +272,7 @@ func (t *Server) Map(args ClientCommand, response *string) error {
 
 
 	return nil
-}
+}*/
 
 // Teams serves a list of all the Teams playing on this server, with a * in front
 // of the calling Player's Team
@@ -244,23 +307,44 @@ func (t *Server) Teams(args ClientCommand, response *string) error {
 func (t *Server) Players(args ClientCommand, response *string) error {
 	output := ""
 
-	teamNum, err := strconv.Atoi(args.Fields[1])
-	if err != nil {
-		return errors.New("Team selection invalid")
-	}
+	playerTeam := t.game.GetPlayerById(args.PlayerId).Team
 
-	if teamNum < 1 || teamNum > len(t.game.Teams) {
-		return errors.New("Team selection out of range")
+	// If a team number is specified
+	if len(args.Fields) > 1 {
+		teamNum, err := strconv.Atoi(args.Fields[1])
+		if err != nil {
+			return errors.New("Team selection invalid")
+		}
 
-	}
+		if teamNum < 1 || teamNum > len(t.game.Teams) {
+			return errors.New("Team selection out of range")
 
-	team := t.game.Teams[teamNum - 1]
+		}
 
-	output += fmt.Sprintf("\n%v [ %v player(s) ]\n", team.Name, team.NumPlayers)
-	output += fmt.Sprintf("%8v %-20v\n", "Points", "Username")
+		team := t.game.Teams[teamNum-1]
 
-	for _, player := range team.Players {
-		output += fmt.Sprintf("%8v %-20v\n", player.Points, player.Username )
+		output += fmt.Sprintf("\n%v [ %v player(s) ]\n", team.Name, team.NumPlayers)
+		output += fmt.Sprintf("%8v %-20v\n", "Points", "Username")
+
+		for _, player := range team.Players {
+			// If its their team, show the points
+			if team == playerTeam {
+				output += fmt.Sprintf("%8v %-20v\n", player.Points, player.Username)
+			} else {
+				output += fmt.Sprintf("%8v %-20v\n", "?", player.Username)}
+		}
+	} else {
+		for num, team := range t.game.Teams {
+			output += fmt.Sprintf("Team %v: %v\n", num + 1, team.Name)
+
+			for _, player := range team.Players {
+				// If its their team, show the points
+				if team == playerTeam {
+					output += fmt.Sprintf("%8v %-20v\n", player.Points, player.Username)
+				} else {
+					output += fmt.Sprintf("%8v %-20v\n", "?", player.Username)}
+			}
+		}
 	}
 
 	*response = output
@@ -281,10 +365,18 @@ func (t *Server) Target(args ClientCommand, response *string) error {
 	}
 
 	teamNum, err := strconv.Atoi(args.Fields[1])
+
+	// Target team number must be a valid team 1-#ofTeams
+	if teamNum > len(t.game.Teams) || teamNum < 1 {
+		return errors.New("not a valid target number. Run 'teams' to see a list of teams and their team#")
+	}
+
 	team := t.game.Teams[teamNum - 1]
 	if team == player.Team {
-		return errors.New("you cannot target you're own team")
+		return errors.New("you cannot target your own team")
 	}
+
+
 
 	// Parse into Target{} (split letters from numbers)
 	target, err := game.StringToTarget(args.Fields[2])
@@ -292,23 +384,47 @@ func (t *Server) Target(args ClientCommand, response *string) error {
 		return err
 	}
 
+
+	timeStamp()
+	fmt.Printf("Shots Fired!\n")
+	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
+	fmt.Printf("\t-Target Team: %v\n", team.Name)
+	fmt.Printf("\t-Coordinate: %v ( %v )\n", target, target.ToCoordinate())
+
 	output := ""
 
 	shotResult := game.FireShot(player, team, target)
 
 	if shotResult == game.HIT {
 		output += "Shot confirmed HIT!\n"
-		output += fmt.Sprint("%v hit streak\n", player.HitStreak)
+		output += fmt.Sprintf("%v hit streak\n", player.HitStreak)
+		fmt.Printf("\t-Result: HIT\n");
 	} else if shotResult == game.REPEAT_HIT {
 		output += "Shot confirmed HIT but no further damage inflicted!\n"
+		fmt.Printf("\t-Result: REPEAT HIT\n");
 	} else if shotResult == game.MISS {
 		output += "Shot confirmed MISS!\n"
+		fmt.Printf("\t-Result: MISS\n");
 	} else if shotResult == game.SINK {
 		output += "Shot confirmed HIT... enemy ship SUNK!\n"
+		fmt.Printf("\t-Result: HIT and SINK\n");
 	}
 
 	*response = output
 
 	return nil
 
+}
+
+func (t *Server) Shutdown(args ClientCommand, response *string) error {
+	if len(args.Fields) < 2 {
+		return errors.New("Must follow admin command with admin password")
+	}
+
+	if args.Fields[1] == t.game.AdminPassword {
+		*response = "Shutting down server"
+	}
+
+	os.Exit(0)
+	return nil
 }

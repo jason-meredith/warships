@@ -5,6 +5,7 @@ import (
 	"math"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 	"warships/base26"
 )
@@ -49,7 +50,9 @@ const (
 	ICON_DEAD = '@'
 
 	// ICON_MISS is the icon representing a missed attempted attack on a team map
-	ICON_MISS = '*'
+	ICON_MISS = "."
+
+	ICON_HIT = "*"
 )
 
 // Orientation is integer used to represent the Orientation enum options. Represents
@@ -128,11 +131,13 @@ func StringToTarget(targetString string) (Target, error) {
 
 	var re = regexp.MustCompile(`(?m)^([A-Z]+)([0-9]+)$`)
 
-	tokens := re.FindAllStringSubmatch(targetString, -1)[0]
+	search := re.FindAllStringSubmatch(strings.ToUpper(targetString), -1)
 
-	if len(tokens) == 0 {
+	if len(search) == 0  {
 		return Target{}, errors.New("invalid Target Format (^[A-Z]+[0-9]+$)")
 	}
+
+	tokens := search[0]
 
 	x := tokens[1]
 	y, _ := strconv.Atoi(tokens[2])
@@ -164,12 +169,17 @@ func FireShot(player *Player, targetTeam *Team, target Target) ShotResult {
 	// return the Ship that is there; otherwise it will return nil.
 	enemyShip := CheckLocation(targetTeam, coordinate)
 
+	// Add the shot the target teams firedupon list
+	targetTeam.ShotsUpon = append(targetTeam.ShotsUpon, coordinate)
+
 	// If there is no Ship there, return MISS, otherwise mark a HIT on the Ship
 	// and return what hit() returns (HIT or SINK)
 	if enemyShip == nil {
 		player.HitStreak = 0
+		player.Team.Misses = append(player.Team.Hits, coordinate)
 		return MISS
 	} else {
+		player.Team.Hits = append(player.Team.Hits, coordinate)
 		return enemyShip.Hit(player, coordinate)
 	}
 
@@ -245,21 +255,25 @@ func (ship *Ship) Hit(player *Player, coordinate Coordinate) ShotResult {
 	ship.Health = ship.Health & bitmask
 
 	if ship.Health == originalShipHealth {
-		player.HitStreak = 0
+		if player != nil {
+			player.HitStreak = 0
+		}
 		return REPEAT_HIT
 	}
 
-	if player.HitStreak == 0 {
-		player.Points += HIT_POINT
-	} else {
-		player.Points += HIT_STREAK_POINT
+	if player != nil {
+		if player.HitStreak == 0 {
+			player.Points += HIT_POINT
+		} else {
+			player.Points += HIT_STREAK_POINT
+		}
+		player.HitStreak++
 	}
 
-	player.HitStreak++
-
-
 	if ship.Health == 0  {
-		player.Points += SINK_POINT
+		if player != nil {
+			player.Points += SINK_POINT
+		}
 		return SINK
 	}
 
@@ -404,6 +418,37 @@ func (team *Team) ShipCoordinates() chan ShipCoord {
 	return channel
 }
 
+
+
+func (game *Game) GetRadar(team *Team) [][]string {
+
+	boardSize := game.BoardSize
+
+
+	board := make([][] string, boardSize)
+	for x := 0; x < int(boardSize); x++ {
+		board[x] = make([] string, boardSize)
+	}
+
+	// Initialize grid with spaces
+	for coord := range game.BoardCoordinates() {
+		board[coord.X][coord.Y] = "_|"
+	}
+
+	// Add in hits
+	for _, hit := range team.Hits {
+		board[hit.X][hit.Y] = ICON_HIT + "|"
+	}
+
+	// Add in misses
+	for _, miss := range team.Misses {
+		board[miss.X][miss.Y] = ICON_MISS + "|"
+	}
+
+
+	return board
+}
+
 func (game *Game) GetMap(team *Team) [][]string {
 
 	boardSize := game.BoardSize
@@ -417,6 +462,11 @@ func (game *Game) GetMap(team *Team) [][]string {
 	// Initialize grid with spaces
 	for coord := range game.BoardCoordinates() {
 		board[coord.X][coord.Y] = "_|"
+	}
+
+	// Add in shots upon our team
+	for _, miss := range team.ShotsUpon {
+		board[miss.X][miss.Y] = ICON_MISS + "|"
 	}
 
 	// Add in our ships

@@ -50,13 +50,22 @@ func main() {
 	clearScreen()
 	fmt.Println(logo)
 	fmt.Println("\t\t ~ By Jason Meredith ~ \n")
+
+	/////////// TODO GET RID OF THIS PLEASE I HATE THIS TIP OF THE DAY
+
+	fmt.Println("Here is your random record from the sample dataset Tip-Of-The-Day!\n")
+//	fmt.Println(dataset.TipOfTheDay())
+	fmt.Println()
+
+	/////////// TODO BUT I NEED TO HAVE IT TO FULFILL THE REQUIRESMENT OF THE ASSIGNMENT
 	time.Sleep(700 * time.Millisecond)
 
 
 
-	inputMenu("Select an option\n1. Start Game\n2. Join Game\n3. Quit",
+	inputMenu("Select an option\n1. Start Game\n2. Join Game\n3. Dataset Manipulation Subprogram\n4. Quit",
 		func() { startServer() },
 		func() { joinGame() },
+		//func() { dataset.DatasetSubProgram()},
 		func() { os.Exit(0)})
 
 }

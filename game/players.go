@@ -59,7 +59,8 @@ type Team struct {
 
 
 	// A log of shots fired by this Team and shots upon this Team
-	ShotsFired []Coordinate
+	Hits []Coordinate
+	Misses []Coordinate
 	ShotsUpon  []Coordinate
 
 	// This Team's Ships
@@ -140,6 +141,7 @@ func (game *Game) NewTeam() *Team {
 	game,
 	[]*Player{},
 	0,
+	[]Coordinate{},
 	[]Coordinate{},
 	[]Coordinate{},
 	[]*Ship{},
