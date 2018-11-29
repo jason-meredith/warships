@@ -176,10 +176,10 @@ func FireShot(player *Player, targetTeam *Team, target Target) ShotResult {
 	// and return what hit() returns (HIT or SINK)
 	if enemyShip == nil {
 		player.HitStreak = 0
-		player.Team.Misses = append(player.Team.Hits, coordinate)
+		player.Team.Misses[targetTeam] = append(player.Team.Misses[targetTeam], coordinate)
 		return MISS
 	} else {
-		player.Team.Hits = append(player.Team.Hits, coordinate)
+		player.Team.Hits[targetTeam] = append(player.Team.Hits[targetTeam], coordinate)
 		return enemyShip.Hit(player, coordinate)
 	}
 
@@ -420,7 +420,7 @@ func (team *Team) ShipCoordinates() chan ShipCoord {
 
 
 
-func (game *Game) GetRadar(team *Team) [][]string {
+func (game *Game) GetRadar(team *Team, targetTeam *Team) [][]string {
 
 	boardSize := game.BoardSize
 
@@ -436,12 +436,12 @@ func (game *Game) GetRadar(team *Team) [][]string {
 	}
 
 	// Add in hits
-	for _, hit := range team.Hits {
+	for _, hit := range team.Hits[targetTeam] {
 		board[hit.X][hit.Y] = ICON_HIT + "|"
 	}
 
 	// Add in misses
-	for _, miss := range team.Misses {
+	for _, miss := range team.Misses[targetTeam] {
 		board[miss.X][miss.Y] = ICON_MISS + "|"
 	}
 

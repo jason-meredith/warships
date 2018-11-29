@@ -59,8 +59,8 @@ type Team struct {
 
 
 	// A log of shots fired by this Team and shots upon this Team
-	Hits []Coordinate
-	Misses []Coordinate
+	Hits  map[*Team][]Coordinate
+	Misses map[*Team][]Coordinate
 	ShotsUpon  []Coordinate
 
 	// This Team's Ships
@@ -141,8 +141,8 @@ func (game *Game) NewTeam() *Team {
 	game,
 	[]*Player{},
 	0,
-	[]Coordinate{},
-	[]Coordinate{},
+	make(map[*Team][]Coordinate),
+	make(map[*Team][]Coordinate),
 	[]Coordinate{},
 	[]*Ship{},
 	}
@@ -151,6 +151,10 @@ func (game *Game) NewTeam() *Team {
 	team.Name = fmt.Sprintf("Fleet-%v", RandomId(teamId, 5))
 
 	game.Teams = append(game.Teams, &team)
+
+	for _, otherTeam := range game.Teams {
+		team.Hits[otherTeam] = []Coordinate{}
+	}
 
 	return &team
 }

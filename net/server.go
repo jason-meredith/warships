@@ -221,9 +221,28 @@ func (t *Server) Map(args ClientCommand, response *string) error {
 
 func (t *Server) Radar(args ClientCommand, response *string) error {
 
+	if len(args.Fields) < 2 {
+		return errors.New("must target radar at a specific team: radar <team#>")
+	}
+
+	teamNum, err := strconv.Atoi(args.Fields[1])
+	if err != nil {
+		return errors.New("team selection invalid")
+	}
+
+	if teamNum < 1 || teamNum > len(t.game.Teams) {
+		return errors.New("team selection out of range")
+
+	}
+
+	targetTeam := t.game.Teams[teamNum-1]
+	if targetTeam == t.game.GetPlayerById(args.PlayerId).Team {
+		return errors.New("you cannot target your own team")
+	}
+
 	// Get the Team Map based on the Player who called the command
 	player := t.game.GetPlayerById(args.PlayerId)
-	teamMap := t.game.GetRadar(player.Team)
+	teamMap := t.game.GetRadar(player.Team, targetTeam)
 
 	// Parse full command to determine section of map to render
 
@@ -238,41 +257,6 @@ func (t *Server) Radar(args ClientCommand, response *string) error {
 
 	return nil
 }
-
-/*
-func (t *Server) Map(args ClientCommand, response *string) error {
-
-	// Get the Team Map based on the Player who called the command
-	player := t.game.GetPlayerById(args.PlayerId)
-	teamMap := t.game.GetMap(player.Team)
-
-	// Parse full command to determine section of map to render
-
-	// Produce a string and put in response
-	output := "  "
-
-	// Top row
-	for x := 0; x <= int(t.game.BoardSize); x++ {
-		output += fmt.Sprintf("%-2v", base26.ConvertToBase26(x))
-	}
-	output += "\n"
-	for y:= 0; y < int(t.game.BoardSize); y++ {
-		output += fmt.Sprintf("%3v ", strconv.Itoa(y))
-		for x:= 0; x < int(t.game.BoardSize); x++ {
-			output += teamMap[x][y]
-		}
-		output += "\n"
-	}
-
-	*response = output
-
-	timeStamp()
-	fmt.Printf("Map Request\n")
-	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
-
-
-	return nil
-}*/
 
 // Teams serves a list of all the Teams playing on this server, with a * in front
 // of the calling Player's Team
@@ -415,6 +399,9 @@ func (t *Server) Target(args ClientCommand, response *string) error {
 	return nil
 
 }
+
+
+//////// ADMIN TASKS //////////
 
 func (t *Server) Shutdown(args ClientCommand, response *string) error {
 	if len(args.Fields) < 2 {
