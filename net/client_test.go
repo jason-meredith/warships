@@ -10,10 +10,10 @@ import (
 
 func runServer() {
 
-	path := "/home/jason/go/src/warships/cli/cli"
+	path := "/home/jason/go/src/warships/main/main"
 	serverComplete := make(chan Result)
 
-	go RunServer(path,12, 12, 12, "pass", "adminpass", serverComplete)
+	go RunServer(path,12, 12, 12, "pass", "adminpass", 32, serverComplete)
 
 
 }
@@ -62,14 +62,14 @@ func TestServer_Target(t *testing.T) {
 
 
 	// Try targeting your their own team
-	command := ClientCommand{ PlayerId: userId, Fields: []string{"target", "1", "1A"} }
+	command := ClientCommand{ PlayerId: userId, Fields: []string{"target", "1", "A1"} }
 	err := connection.Call("Server.Target", &command, &response)
 	if err.Error() != "you cannot target your own team" {
 		t.Error("Should have returned error when targeting own team")
 	}
 
 	// Try targeting non-existant team
-	command = ClientCommand{ PlayerId: userId, Fields: []string{"target", "3", "1A"} }
+	command = ClientCommand{ PlayerId: userId, Fields: []string{"target", "3", "A1"} }
 	err = connection.Call("Server.Target", &command, &response)
 	if err.Error() != "not a valid target number. Run 'teams' to see a list of teams and their team#" {
 		t.Error("Should have returned error when targeting non-existing team number")
@@ -77,7 +77,7 @@ func TestServer_Target(t *testing.T) {
 
 
 	// Try targeting  non-existant team
-	command = ClientCommand{ PlayerId: userId, Fields: []string{"target", "0", "1A"} }
+	command = ClientCommand{ PlayerId: userId, Fields: []string{"target", "0", "A1"} }
 	err = connection.Call("Server.Target", &command, &response)
 	if err.Error() != "not a valid target number. Run 'teams' to see a list of teams and their team#" {
 		t.Error("Should have returned error when targeting non-existing team number")
@@ -93,16 +93,15 @@ func TestServer_Target(t *testing.T) {
 
 
 	// Try targeting your their own team
-	command = ClientCommand{ PlayerId: userId, Fields: []string{"map" } }
-	err = connection.Call("Server.Map", &command, &response)
-	fmt.Println(response)
 
 
+
+	command = ClientCommand{ PlayerId: userId, Fields: []string{"target", "2", "c4"} }
 	err = connection.Call("Server.Target", &command, &response)
-	fmt.Println(response)
 	if response != "Shot confirmed HIT!\n1 hit streak\n" {
 		t.Error("Hit should have registered as a hit")
 	}
+
 
 
 }

@@ -50,9 +50,9 @@ const (
 	ICON_DEAD = '@'
 
 	// ICON_MISS is the icon representing a missed attempted attack on a team map
-	ICON_MISS = "."
+	ICON_MISS = "-"
 
-	ICON_HIT = "*"
+	ICON_HIT = "x"
 )
 
 // Orientation is integer used to represent the Orientation enum options. Represents
@@ -111,6 +111,8 @@ type Game struct {
 	BoardSize		uint8
 
 	Teams			[]*Team
+
+	StartDeployPts	int
 
 }
 
@@ -284,7 +286,7 @@ func (ship *Ship) Hit(player *Player, coordinate Coordinate) ShotResult {
 func (team *Team) NewShip(size uint8, orientation Orientation, coordinate Coordinate) (*Ship, error) {
 
 	// Make sure ship limit hasn't been reached
-	if len(team.Ships) >= int(team.Game.ShipLimit) {
+	if len(team.Ships) >= int(team.Game.ShipLimit) &&  int(team.Game.ShipLimit) != 0 {
 		return nil, errors.New("ship Limit For This Team Has Been Reached")
 	}
 
@@ -416,6 +418,16 @@ func (team *Team) ShipCoordinates() chan ShipCoord {
 	}()
 
 	return channel
+}
+
+func (game *Game) UniqueTeamName(name string) bool {
+	for _, team := range game.Teams {
+		if team.Name == name {
+			return false
+		}
+	}
+
+	return true
 }
 
 

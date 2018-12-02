@@ -13,7 +13,7 @@ type Result struct{
 }
 
 
-func RunServer(path string, maxPlayers, boardSize, shipLimit int, pass, adminPass string, output chan Result) {
+func RunServer(path string, maxPlayers, boardSize, shipLimit int, pass, adminPass string, deployPoints int, output chan Result) {
 
 	fmt.Println("Running Server...")
 
@@ -30,6 +30,7 @@ func RunServer(path string, maxPlayers, boardSize, shipLimit int, pass, adminPas
 	in.Write([]byte(strconv.Itoa(shipLimit)))
 	in.Write([]byte(pass))
 	in.Write([]byte(adminPass))
+	in.Write([]byte(strconv.Itoa(deployPoints)))
 
 	cmd.Stdin = &in
 

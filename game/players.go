@@ -42,6 +42,8 @@ type Player struct {
 	// How many hits this player has gotten in a row
 	HitStreak int
 
+	PreviousTeam *Team
+
 }
 
 // Team is a collection of Players working together on the same team
@@ -65,6 +67,8 @@ type Team struct {
 
 	// This Team's Ships
 	Ships []*Ship
+
+	DeploymentPoints int
 
 }
 
@@ -101,7 +105,7 @@ func (game *Game) Join (username, password string) (*Player, bool, error) {
 		team := game.GetSmallestTeam()
 
 		// Create new player
-		newPlayer := Player{username, password, team, id, 0, 0}
+		newPlayer := Player{username, password, team, id, 0, 0, nil}
 
 		// Add reference to player to Team.Players array
 		team.Players = append(team.Players, &newPlayer)
@@ -145,6 +149,7 @@ func (game *Game) NewTeam() *Team {
 	make(map[*Team][]Coordinate),
 	[]Coordinate{},
 	[]*Ship{},
+	game.StartDeployPts,
 	}
 
 	teamId := fmt.Sprintf("%p", &team)
@@ -177,11 +182,27 @@ func (game *Game) GetPlayerById(id string) *Player {
 	return result
 }
 
+// TopPlayer finds a returns the player on a team with the most points (the leader)
+func (team *Team) TopPlayer() *Player {
+	topPlayer := team.Players[0]
+	topPlyrPt := team.Players[0].Points
+
+
+	for _, player := range team.Players {
+		if player.Points > topPlyrPt {
+			topPlayer = player
+			topPlyrPt = topPlayer.Points
+		}
+	}
+
+	return topPlayer
+}
+
 // SwitchTeam switches a Players Team
 func SwitchTeam(player *Player, destTeam *Team) {
 
 	// Get the Players original Team
-	originalTeam := *player.Team
+	originalTeam := player.Team
 
 	// Find the index in the Team.Players array of the Player
 	playerIndex := originalTeam.findPlayerIndex(player)
@@ -191,7 +212,10 @@ func SwitchTeam(player *Player, destTeam *Team) {
 		originalTeam.Players[playerIndex+1:]...)
 
 	// Change the Player.Team value
-	*player.Team = *destTeam
+	player.Team = destTeam
+
+	// Decrease original team count
+	originalTeam.NumPlayers--
 
 	// Increment destTeam player count
 	destTeam.NumPlayers++

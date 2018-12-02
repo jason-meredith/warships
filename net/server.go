@@ -113,7 +113,11 @@ func StartGameServer(newGame *game.Game) {
 
 	// Loop for as long as Game is 'live'
 	for server.game.Live {
-
+		// Every five seconds give each team a deployment point
+		time.Sleep(5 * time.Second)
+		for _, team := range server.game.Teams {
+			team.DeploymentPoints++
+		}
 	}
 
 }
@@ -355,6 +359,11 @@ func (t *Server) Target(args ClientCommand, response *string) error {
 		return errors.New("not a valid target number. Run 'teams' to see a list of teams and their team#")
 	}
 
+	// You must have ships to target another team
+	if len(player.Team.Ships) == 0 {
+		return errors.New("you must have ships deployed to fire shots")
+	}
+
 	team := t.game.Teams[teamNum - 1]
 	if team == player.Team {
 		return errors.New("you cannot target your own team")
@@ -400,8 +409,164 @@ func (t *Server) Target(args ClientCommand, response *string) error {
 
 }
 
+func (t *Server) Deploy(args ClientCommand, response *string) error {
 
-//////// ADMIN TASKS //////////
+	player := t.game.GetPlayerById(args.PlayerId)
+
+	var location game.Target
+	var size int
+	var orientation game.Orientation
+
+	if len(args.Fields) < 4 {
+		return errors.New("not enough arguments to perform target command: deploy <location> <size> <orientation( H|V )>")
+	}
+
+	// Parse into Target{} (split letters from numbers)
+	location, err := game.StringToTarget(args.Fields[1])
+	if err != nil {
+		return err
+	}
+
+	// Get ship size
+	size, err = strconv.Atoi(args.Fields[2])
+	if err != nil {
+		return errors.New("ship size selection invalid: deploy <location> <size> <orientation( H|V )>")
+	}
+
+	if size < 1 || size > 8 {
+		return errors.New("ship size selection invalid: deploy <location> <size> <orientation( H|V )>")
+	}
+
+	// Get ship orientation
+	if args.Fields[3] == "H" {
+		orientation = game.HORIZONTAL
+	} else if args.Fields[3] == "V" {
+		orientation = game.VERTICAL
+	} else {
+		return errors.New("ship orientation selection invalid: deploy <location> <size> <orientation( H|V )>")
+	}
+
+	// Make sure team has enough deployment points
+	if player.Team.DeploymentPoints >= size {
+		_, err = player.Team.NewShip(uint8(size), orientation, location.ToCoordinate())
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("not enough deployment points")
+	}
+
+	player.Team.DeploymentPoints -= size
+
+	*response = fmt.Sprintf("Ship deployed - %v deployment points remaining",  player.Team.DeploymentPoints)
+
+	return nil
+
+}
+
+
+func (t *Server) Points (args ClientCommand, response *string) error {
+	*response = fmt.Sprintf("Your team has %v deployment points",
+		t.game.GetPlayerById(args.PlayerId).Team.DeploymentPoints)
+
+	return nil
+}
+
+
+//////// HELP COMMANDS ///////////
+
+
+func (t *Server) ChatHelp (args ClientCommand, response *string) error {
+	output := "\t Type $ followed by a space and your message to CHAT ALL\n"
+	output += "\t Type # followed by a space and your message to TEAM CHAT\n"
+	output += "\t Type @ followed by a space, username, space and your message to PRIVATE CHAT\n"
+
+	*response = output
+
+	return nil
+}
+
+
+
+//////// LEADER COMMANDS //////////
+
+// Rename a team
+func (t *Server) Rename(args ClientCommand, response *string) error {
+
+	player := t.game.GetPlayerById(args.PlayerId)
+	if player != player.Team.TopPlayer() {
+		return errors.New("you must be team leader to do this (player on your team with them most points)")
+	}
+
+	if len(args.Fields) < 2 {
+		return errors.New("not enough arguments to perform target command: rename <new_name>")
+	}
+
+
+	oldName := player.Team.Name
+	newName := args.Fields[1]
+
+	if t.game.UniqueTeamName(newName) {
+		player.Team.Name = newName
+	} else {
+		return errors.New("team name already taken")
+	}
+
+	*response = fmt.Sprintf("Team %v renamed to %v", oldName, newName)
+
+	timeStamp()
+	fmt.Printf("Team Renamed\n")
+	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
+	fmt.Printf("\t-Team %v renamed to %v\n", oldName, newName)
+
+	return nil
+}
+
+// Mutiny will start a new team and steal half the deployment points, but your score is reset to 10
+func (t *Server) Mutiny(args ClientCommand, response *string) error {
+	player := t.game.GetPlayerById(args.PlayerId)
+	//if player == player.Team.TopPlayer() {
+	//	return errors.New("you cannot be team leader to do this (player on your team with them most points)")
+	//}
+
+	//if player.Points < 100 {
+	//	return errors.New("you must have at least 100 points to start your own team")
+	//}
+
+	if len(args.Fields) < 2 {
+		return errors.New("not enough arguments to perform target command: mutiny <new_name>")
+	}
+
+	oldTeam := player.Team
+	newTeam := t.game.NewTeam()
+
+	// Split the deployment points
+	newTeam.DeploymentPoints = oldTeam.DeploymentPoints/2
+	oldTeam.DeploymentPoints = oldTeam.DeploymentPoints/2
+
+	newTeam.Name = args.Fields[1]
+	game.SwitchTeam(player, newTeam)
+	player.Points = 10
+
+	output := fmt.Sprintf("Treachery! You have stolen %v deployment points to start your own team: %v\n",
+		newTeam.DeploymentPoints, newTeam.Name)
+
+	output += "By starting your own team your points have been reduced to 10"
+
+	*response = output
+
+
+	timeStamp()
+	fmt.Printf("Mutiny!\n")
+	fmt.Printf("\t-Player: %v (%v)\n", player.Username, args.PlayerId)
+	fmt.Printf("\n\t[Teams]\n")
+	PrintTeamCounts(t.game)
+
+	return nil
+
+}
+
+//////// ADMIN COMMANDS //////////
 
 func (t *Server) Shutdown(args ClientCommand, response *string) error {
 	if len(args.Fields) < 2 {

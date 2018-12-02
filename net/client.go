@@ -87,6 +87,9 @@ func AcceptCommands(playerId string, connection *rpc.Client) {
 	commands["teams"]		= "Server.Teams"	// Show the teams list
 	commands["shutdown"]	= "Server.Shutdown" // Shutdown server
 	commands["deploy"]		= "Server.Deploy"	// Deploy a new ship
+	commands["rename"]		= "Server.Rename"	// Rename a team
+	commands["mutiny"]		= "Server.Mutiny"	// Steal deployment points to start a new team
+	commands["points"]		= "Server.Points"	// Display how many deployment points your team has
 
 	for {
 
