@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"warships/net"
+	"github.com/jason-meredith/warships/net"
 )
 
 /*********************************************************

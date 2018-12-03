@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"warships/base26"
+	base26 "github.com/jason-meredith/warships/base26"
 )
 
 /*********************************************************
@@ -267,7 +267,7 @@ func (ship *Ship) Hit(player *Player, coordinate Coordinate) ShotResult {
 		if player.HitStreak == 0 {
 			player.Points += HIT_POINT
 		} else {
-			player.Points += HIT_STREAK_POINT
+			player.Points += HIT_STREAK_POINT + player.HitStreak
 		}
 		player.HitStreak++
 	}

@@ -85,7 +85,8 @@ func inputOptions(prompt string, options ...string) map[string]string {
 	for i := 0; i < len(prompt); i++ {
 		fmt.Print("-")
 	}
-	fmt.Println("\n")
+	fmt.Println()
+	fmt.Println()
 
 	for _, option := range options {
 		fmt.Printf("%-20s\t", option)
@@ -100,5 +101,6 @@ func inputOptions(prompt string, options ...string) map[string]string {
 func setupScreen() {
 	clearScreen()
 	fmt.Println(logo)
-	fmt.Println("\t\t ~ By Jason Meredith ~ \n")
+	fmt.Println("\t\t ~ By Jason Meredith ~")
+	fmt.Println()
 }

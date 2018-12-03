@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"warships/game"
-	"warships/net"
+	game "github.com/jason-meredith/warships/game"
+	net "github.com/jason-meredith/warships/net"
 )
 
 var logo = `
@@ -49,7 +49,8 @@ func main() {
 
 	clearScreen()
 	fmt.Println(logo)
-	fmt.Println("\t\t ~ By Jason Meredith ~ \n")
+	fmt.Println("\t\t ~ By Jason Meredith ~ ")
+	fmt.Println()
 
 	inputMenu("Select an option\n1. Start Game\n2. Join Game\n3. Quit",
 		func() { startServer() },

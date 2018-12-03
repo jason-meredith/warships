@@ -6,6 +6,20 @@ import (
 	"os/exec"
 	"strconv"
 )
+/*********************************************************
+ *														 *
+ *                   	  Warships						 *
+ *					   Jason Meredith					 *
+ *														 *
+ *	DATE:		December 2, 2018						 *
+ *	FILE: 		game.go								 	 *
+ *	PURPOSE:	Runs an instance of the Warships server  *
+ *				automatically for testing purposes		 *
+ *														 *
+ *				 										 *
+ *														 *
+ *********************************************************/
+
 
 type Result struct{
 	output string

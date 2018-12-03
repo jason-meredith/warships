@@ -9,8 +9,8 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"warships/base26"
-	"warships/game"
+	base26 "github.com/jason-meredith/warships/base26"
+	game "github.com/jason-meredith/warships/game"
 )
 
 
@@ -183,10 +183,10 @@ func (t *Server) EchoTest(args ClientCommand, response *string) error {
 
 func PrintMap(boardSize uint8, icon func(x, y int) string) string {
 	// Produce a string and put in response
-	output := "  "
+	output := "    "
 
 	// Top row
-	for x := 0; x <= int(boardSize); x++ {
+	for x := 0; x <= int(boardSize - 1); x++ {
 		output += fmt.Sprintf("%-2v", base26.ConvertToBase26(x))
 	}
 	output += "\n"

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03223814-1533-4047-8531-bec1b79cb28c" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/cli/autorun" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cli/autorun.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cli/cli" beforeDir="false" afterPath="$PROJECT_DIR$/main/main" afterDir="false" />
@@ -14,6 +15,18 @@
       <change beforePath="$PROJECT_DIR$/net/autorun.go" beforeDir="false" afterPath="$PROJECT_DIR$/net/autorun.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/net/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/net/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/net/client_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/net/client_test.go" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/base26/base26_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base26/base26.go" beforeDir="false" afterPath="$PROJECT_DIR$/base26/base26.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/dataset.go" beforeDir="false" afterPath="$PROJECT_DIR$/dataset/dataset.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/game.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/game.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/game_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/game/game_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/input.go" beforeDir="false" afterPath="$PROJECT_DIR$/main/input.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/launcher.go" beforeDir="false" afterPath="$PROJECT_DIR$/main/launcher.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main" beforeDir="false" afterPath="$PROJECT_DIR$/main/main" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/net/autorun.go" beforeDir="false" afterPath="$PROJECT_DIR$/net/autorun.go" afterDir="false" />
+>>>>>>> school
       <change beforePath="$PROJECT_DIR$/net/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/net/server.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -65,7 +78,11 @@
         <counts>
           <entry key="css" value="1" />
           <entry key="csv" value="2" />
+<<<<<<< HEAD
           <entry key="go" value="178" />
+=======
+          <entry key="go" value="196" />
+>>>>>>> school
           <entry key="html" value="2" />
           <entry key="md" value="1" />
           <entry key="out" value="1" />
@@ -77,7 +94,11 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CSS" value="1" />
+<<<<<<< HEAD
           <entry key="Go" value="178" />
+=======
+          <entry key="Go" value="196" />
+>>>>>>> school
           <entry key="HTML" value="2" />
           <entry key="PLAIN_TEXT" value="6" />
           <entry key="x86 Plan9 Assembly" value="1" />
@@ -86,7 +107,11 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="css" value="135" />
+<<<<<<< HEAD
           <entry key="go" value="70143" />
+=======
+          <entry key="go" value="71555" />
+>>>>>>> school
           <entry key="html" value="930" />
           <entry key="project_layout" value="549" />
           <entry key="test_coverage" value="79" />
@@ -95,7 +120,11 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="135" />
+<<<<<<< HEAD
           <entry key="Go" value="70143" />
+=======
+          <entry key="Go" value="71555" />
+>>>>>>> school
           <entry key="HTML" value="930" />
           <entry key="PLAIN_TEXT" value="628" />
         </counts>
@@ -111,61 +140,114 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+<<<<<<< HEAD
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main/launcher.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="225">
               <caret line="56" column="29" lean-forward="true" selection-start-line="56" selection-start-column="29" selection-end-line="56" selection-end-column="29" />
+=======
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/net/server.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="705">
+              <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/web/server_http.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="27" column="42" selection-start-line="27" selection-start-column="42" selection-end-line="27" selection-end-column="42" />
+>>>>>>> school
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/dataset/dataset.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="404">
               <caret line="66" column="23" selection-start-line="66" selection-start-column="23" selection-end-line="66" selection-end-column="23" />
+=======
+        <entry file="file://$PROJECT_DIR$/base26/base26.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="390">
+              <caret line="29" column="26" lean-forward="true" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="26" />
+>>>>>>> school
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/net/server.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="420">
               <caret line="126" column="45" selection-start-line="126" selection-start-column="45" selection-end-line="126" selection-end-column="45" />
+=======
+        <entry file="file://$PROJECT_DIR$/dataset/dataset.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1770">
+              <caret line="127" column="72" selection-start-line="127" selection-start-column="72" selection-end-line="127" selection-end-column="72" />
+>>>>>>> school
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/base26/base26.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="360">
               <caret line="26" column="20" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="20" />
+=======
+        <entry file="file://$PROJECT_DIR$/game/game.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="12" selection-start-line="12" selection-end-line="27" selection-end-column="59" />
+>>>>>>> school
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/game/game.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1090">
               <caret line="484" column="51" selection-start-line="484" selection-start-column="51" selection-end-line="484" selection-end-column="51" />
+=======
+        <entry file="file://$PROJECT_DIR$/net/autorun.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+>>>>>>> school
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/game/players.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="675">
               <caret line="217" column="27" selection-start-line="217" selection-start-column="27" selection-end-line="217" selection-end-column="27" />
+=======
+        <entry file="file://$PROJECT_DIR$/game/game_test.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-180">
+              <caret line="88" selection-start-line="88" selection-end-line="88" />
+>>>>>>> school
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/net/client_test.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="540">
@@ -173,6 +255,12 @@
               <folding>
                 <element signature="e#13#60#0" expanded="true" />
               </folding>
+=======
+        <entry file="file://$PROJECT_DIR$/main/input.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="595">
+              <caret line="103" column="43" selection-start-line="103" selection-start-column="43" selection-end-line="103" selection-end-column="43" />
+>>>>>>> school
             </state>
           </provider>
         </entry>
@@ -180,7 +268,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/net/client.go">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="415">
+=======
+            <state relative-caret-position="1650">
+>>>>>>> school
               <caret line="110" column="48" selection-start-line="110" selection-start-column="48" selection-end-line="110" selection-end-column="48" />
               <folding>
                 <element signature="e#13#88#0" expanded="true" />
@@ -189,6 +281,18 @@
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
+=======
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dataset/loader.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="45" column="12" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+>>>>>>> school
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -238,13 +342,18 @@
         <option value="$PROJECT_DIR$/web/html/about.html" />
         <option value="$PROJECT_DIR$/web/server_http.go" />
         <option value="$PROJECT_DIR$/cli/input.go" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/base26/base26.go" />
         <option value="$PROJECT_DIR$/test_coverage" />
         <option value="$PROJECT_DIR$/game/game_test.go" />
+=======
+        <option value="$PROJECT_DIR$/test_coverage" />
+>>>>>>> school
         <option value="$PROJECT_DIR$/dataset/dataset_test.go" />
         <option value="$PROJECT_DIR$/dataset/loader.go" />
         <option value="$PROJECT_DIR$/dataset/operations.go" />
         <option value="$PROJECT_DIR$/exercise5/exercise5.go" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/dataset/dataset.go" />
         <option value="$PROJECT_DIR$/cli/exectest.go" />
         <option value="$PROJECT_DIR$/cli/autorun.go" />
@@ -257,6 +366,24 @@
         <option value="$PROJECT_DIR$/game/game.go" />
         <option value="$PROJECT_DIR$/net/server.go" />
         <option value="$PROJECT_DIR$/main/launcher.go" />
+=======
+        <option value="$PROJECT_DIR$/cli/exectest.go" />
+        <option value="$PROJECT_DIR$/cli/autorun.go" />
+        <option value="$PROJECT_DIR$/cli/launcher.go" />
+        <option value="$PROJECT_DIR$/game/players.go" />
+        <option value="$PROJECT_DIR$/main/autorun.go" />
+        <option value="$PROJECT_DIR$/net/client_test.go" />
+        <option value="$PROJECT_DIR$/net/client.go" />
+        <option value="$PROJECT_DIR$/base26/base26_test.go" />
+        <option value="$PROJECT_DIR$/net/server.go" />
+        <option value="$PROJECT_DIR$/dataset/dataset.go" />
+        <option value="$PROJECT_DIR$/main/input.go" />
+        <option value="$PROJECT_DIR$/base26/base26.go" />
+        <option value="$PROJECT_DIR$/main/launcher.go" />
+        <option value="$PROJECT_DIR$/game/game.go" />
+        <option value="$PROJECT_DIR$/game/game_test.go" />
+        <option value="$PROJECT_DIR$/net/autorun.go" />
+>>>>>>> school
       </list>
     </option>
   </component>
@@ -310,6 +437,14 @@
               <item name="warships" type="462c0819:PsiDirectoryNode" />
               <item name="net" type="462c0819:PsiDirectoryNode" />
             </path>
+<<<<<<< HEAD
+=======
+            <path>
+              <item name="warships" type="b2602c69:ProjectViewProjectNode" />
+              <item name="warships" type="462c0819:PsiDirectoryNode" />
+              <item name="web" type="462c0819:PsiDirectoryNode" />
+            </path>
+>>>>>>> school
           </expand>
           <select />
         </subPane>
@@ -372,16 +507,26 @@
       </list>
     </option>
   </component>
+<<<<<<< HEAD
   <component name="RunManager" selected="Go Test.client_test.go">
     <configuration name="go build exectest.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="warships" />
       <working_directory value="$PROJECT_DIR$/" />
       <kind value="FILE" />
       <filePath value="$PROJECT_DIR$/cli/exectest.go" />
+=======
+  <component name="RunManager" selected="Go Test.go test warships">
+    <configuration name="go build launcher.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="warships" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/main/launcher.go" />
+>>>>>>> school
       <package value="warships" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
     <configuration name="go build exercise5.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="warships" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -404,6 +549,11 @@
       <module name="warships" />
       <working_directory value="$PROJECT_DIR$/" />
       <go_parameters value="-i" />
+=======
+    <configuration name="Go Test Game" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="warships" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
       <framework value="gotest" />
       <kind value="DIRECTORY" />
       <package value="warships" />
@@ -411,6 +561,28 @@
       <filePath value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
+    <configuration name="base26_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="warships" />
+      <working_directory value="$PROJECT_DIR$/base26" />
+      <framework value="gotest" />
+      <kind value="FILE" />
+      <package value="warships" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/base26/base26_test.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go test game" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="warships" />
+      <working_directory value="$PROJECT_DIR$/game" />
+>>>>>>> school
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
+      <package value="warships" />
+      <directory value="$PROJECT_DIR$/game" />
+      <filePath value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+<<<<<<< HEAD
     <configuration name="client_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="warships" />
       <working_directory value="$PROJECT_DIR$/net" />
@@ -429,10 +601,31 @@
       <package value="warships" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/game/game_test.go" />
+=======
+    <configuration name="go test net" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="warships" />
+      <working_directory value="$PROJECT_DIR$/net" />
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
+      <package value="warships" />
+      <directory value="$PROJECT_DIR$/net" />
+      <filePath value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go test warships" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="warships" />
+      <working_directory value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
+      <package value="warships" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/" />
+>>>>>>> school
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Go Test.Go Test Game" />
+<<<<<<< HEAD
       <item itemvalue="Go Build.go build exercise5.go" />
       <item itemvalue="Go Build.go build warships/cli" />
       <item itemvalue="Go Build.go build exectest.go" />
@@ -446,10 +639,26 @@
         <item itemvalue="Go Build.go build exectest.go" />
         <item itemvalue="Go Build.go build warships/cli" />
         <item itemvalue="Go Build.go build exercise5.go" />
+=======
+      <item itemvalue="Go Test.base26_test.go" />
+      <item itemvalue="Go Test.go test game" />
+      <item itemvalue="Go Test.go test net" />
+      <item itemvalue="Go Test.go test warships" />
+      <item itemvalue="Go Build.go build launcher.go" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.go test warships" />
+        <item itemvalue="Go Build.go build launcher.go" />
+        <item itemvalue="Go Test.go test net" />
+        <item itemvalue="Go Test.go test game" />
+        <item itemvalue="Go Test.base26_test.go" />
+>>>>>>> school
       </list>
     </recent_temporary>
   </component>
   <component name="TestHistory">
+<<<<<<< HEAD
     <history-entry file="client_test_go - 2018.12.01 at 21h 34m 26s.xml">
       <configuration name="client_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
@@ -479,18 +688,58 @@
     </history-entry>
     <history-entry file="client_test_go - 2018.12.01 at 21h 59m 15s.xml">
       <configuration name="client_test.go" configurationId="GoTestRunConfiguration" />
+=======
+    <history-entry file="go_test_net - 2018.12.02 at 01h 31m 00s.xml">
+      <configuration name="go test net" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 01h 48m 41s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 01h 50m 00s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 01h 50m 54s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 01h 51m 16s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 01h 52m 22s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 01h 52m 57s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 01h 53m 19s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 01h 53m 42s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_warships - 2018.12.02 at 10h 46m 08s.xml">
+      <configuration name="go test warships" configurationId="GoTestRunConfiguration" />
+>>>>>>> school
     </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="20" y="-2" width="1560" height="882" extended-state="0" />
     <editor active="true" />
     <layout>
+<<<<<<< HEAD
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4975" visible="true" weight="0.22126816" />
       <window_info id="Structure" order="1" sideWeight="0.5025" side_tool="true" weight="0.44401544" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3263158" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.48157895" />
+=======
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49605262" visible="true" weight="0.22060767" />
+      <window_info id="Structure" order="1" sideWeight="0.5039474" side_tool="true" weight="0.22085048" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3263158" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.6618421" />
+>>>>>>> school
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3675" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -506,6 +755,7 @@
       <window_info anchor="right" id="Database" order="3" weight="0.32829374" />
     </layout>
     <layout-to-restore>
+<<<<<<< HEAD
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4975" visible="true" weight="0.22126816" />
       <window_info id="Structure" order="1" sideWeight="0.5025" side_tool="true" weight="0.44401544" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -513,14 +763,29 @@
       <window_info anchor="bottom" id="Find" order="1" weight="0.3263158" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.48157895" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3675" />
+=======
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25363275" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32894737" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32894737" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+>>>>>>> school
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+<<<<<<< HEAD
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3276316" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4993565" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5006435" side_tool="true" />
       <window_info anchor="bottom" id="Statistic" order="11" />
+=======
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32894737" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+>>>>>>> school
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -550,7 +815,10 @@
     </ignored-roots>
   </component>
   <component name="editorHistoryManager">
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/project_layout" />
+=======
+>>>>>>> school
     <entry file="file://$PROJECT_DIR$/dataset/sample.csv">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -593,6 +861,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/web/server_http.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
@@ -600,6 +869,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> school
     <entry file="file://$PROJECT_DIR$/web/html/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="430">
@@ -610,6 +881,7 @@
     <entry file="file://$PROJECT_DIR$/game.out" />
     <entry file="file://$PROJECT_DIR$/test_coverage" />
     <entry file="file://$PROJECT_DIR$/cli/dataset.csv" />
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/dataset/dataset_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -617,6 +889,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> school
     <entry file="file://$PROJECT_DIR$/exercise5/exercise5.go" />
     <entry file="file://$PROJECT_DIR$/dataset/operations.go">
       <provider selected="true" editor-type-id="text-editor">
@@ -625,6 +899,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/dataset/dataset.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="404">
@@ -639,6 +914,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> school
     <entry file="file:///usr/lib/go/src/testing/testing.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="111">
@@ -678,6 +955,7 @@
     <entry file="file://$PROJECT_DIR$/cli/input.go" />
     <entry file="file://$PROJECT_DIR$/cli/launcher.go" />
     <entry file="file://$PROJECT_DIR$/main/autorun.go" />
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/game/game_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4020">
@@ -685,6 +963,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> school
     <entry file="file:///usr/lib/go/src/net/rpc/server.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="128">
@@ -692,6 +972,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/net/autorun.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
@@ -699,6 +980,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> school
     <entry file="file://$PROJECT_DIR$/game/players.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
@@ -716,6 +999,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/net/client.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="415">
@@ -723,11 +1007,53 @@
           <folding>
             <element signature="e#13#88#0" expanded="true" />
           </folding>
+=======
+    <entry file="file://$PROJECT_DIR$/dataset/dataset_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-690">
+          <caret column="15" selection-start-column="15" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/launcher.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="815">
+          <caret line="82" column="38" selection-start-line="82" selection-start-column="38" selection-end-line="82" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/base26/base26_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="75" column="30" selection-start-line="75" selection-start-column="20" selection-end-line="75" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/input.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="103" column="43" selection-start-line="103" selection-start-column="43" selection-end-line="103" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dataset/loader.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="45" column="12" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/game_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-180">
+          <caret line="88" selection-start-line="88" selection-end-line="88" />
+>>>>>>> school
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/base26/base26.go">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="360">
           <caret line="26" column="20" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="20" />
         </state>
@@ -737,20 +1063,65 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="56" column="29" lean-forward="true" selection-start-line="56" selection-start-column="29" selection-end-line="56" selection-end-column="29" />
+=======
+        <state relative-caret-position="390">
+          <caret line="29" column="26" lean-forward="true" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dataset/dataset.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1770">
+          <caret line="127" column="72" selection-start-line="127" selection-start-column="72" selection-end-line="127" selection-end-column="72" />
+>>>>>>> school
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/game/game.go">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="1090">
           <caret line="484" column="51" selection-start-line="484" selection-start-column="51" selection-end-line="484" selection-end-column="51" />
+=======
+        <state relative-caret-position="60">
+          <caret line="12" selection-start-line="12" selection-end-line="27" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/net/autorun.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/net/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1650">
+          <caret line="110" column="48" selection-start-line="110" selection-start-column="48" selection-end-line="110" selection-end-column="48" />
+          <folding>
+            <element signature="e#13#88#0" expanded="true" />
+          </folding>
+>>>>>>> school
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/net/server.go">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="420">
           <caret line="126" column="45" selection-start-line="126" selection-start-column="45" selection-end-line="126" selection-end-column="45" />
+=======
+        <state relative-caret-position="705">
+          <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/server_http.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="27" column="42" selection-start-line="27" selection-start-column="42" selection-end-line="27" selection-end-column="42" />
+>>>>>>> school
         </state>
       </provider>
     </entry>
