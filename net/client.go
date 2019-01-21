@@ -40,14 +40,14 @@ type ClientCommand struct {
 func CreateServerConnection(username, password, address string) (string, *rpc.Client, error) {
 
 	// Create connection to server
-	client, err := rpc.DialHTTP("tcp", address + ":" + strconv.Itoa(RPC_PORT))
+	client, err := rpc.DialHTTP("tcp", address+":"+strconv.Itoa(RPC_PORT))
 	if err != nil {
 		return "", nil, errors.New("unable to connect to that address")
 	}
 
 	login := LoginCredentials{
-		Username:username,
-		Password:password,
+		Username: username,
+		Password: password,
 	}
 
 	var details JoinDetails
@@ -57,7 +57,6 @@ func CreateServerConnection(username, password, address string) (string, *rpc.Cl
 		return "", nil, err
 	}
 
-
 	fmt.Printf("Joined Game with ID %v\n", details.PlayerId)
 	fmt.Printf("Assigned to team: %v\n", details.TeamName)
 
@@ -65,31 +64,38 @@ func CreateServerConnection(username, password, address string) (string, *rpc.Cl
 
 }
 
-// AcceptCommands takes a the UserID and RPC Client object and prompts the user for
-// keyboard input. If the first token of the input matches a key in hashmap of commands
-// their UserID and full input are sent to the server wrapped in ClientCommand struct.
-// Response string from server is printed to screen.
-func AcceptCommands(playerId string, connection *rpc.Client) {
-
-
-	reader := bufio.NewReader(os.Stdin)
-	var input string
-
+// GetCommand maps the first field in a user input to a Server RPC call function
+// Return the ServerCall string and a boolean if its a valid call
+func GetCommand(input string) (string, bool) {
 	// Map the client commands to remote function calls
 	var commands map[string]string
 	commands = make(map[string]string)
-	commands["echo"] 		= "Server.EchoTest" // Test command
-	commands["target"] 		= "Server.Target"	// Fire a shot at given location
-	commands["sweep"]		= "Server.Sweep"	// Check a location for enemies without firing
-	commands["map"]			= "Server.Map"		// Show team map
-	commands["radar"]		= "Server.Radar"	// Show shots fired on enemy map
-	commands["players"]		= "Server.Players"	// Show the player list
-	commands["teams"]		= "Server.Teams"	// Show the teams list
-	commands["shutdown"]	= "Server.Shutdown" // Shutdown server
-	commands["deploy"]		= "Server.Deploy"	// Deploy a new ship
-	commands["rename"]		= "Server.Rename"	// Rename a team
-	commands["mutiny"]		= "Server.Mutiny"	// Steal deployment points to start a new team
-	commands["points"]		= "Server.Points"	// Display how many deployment points your team has
+	commands["echo"] = "Server.EchoTest"     // Test command
+	commands["target"] = "Server.Target"     // Fire a shot at given location
+	commands["sweep"] = "Server.Sweep"       // Check a location for enemies without firing
+	commands["map"] = "Server.Map"           // Show team map
+	commands["radar"] = "Server.Radar"       // Show shots fired on enemy map
+	commands["players"] = "Server.Players"   // Show the player list
+	commands["teams"] = "Server.Teams"       // Show the teams list
+	commands["shutdown"] = "Server.Shutdown" // Shutdown server
+	commands["deploy"] = "Server.Deploy"     // Deploy a new ship
+	commands["rename"] = "Server.Rename"     // Rename a team
+	commands["mutiny"] = "Server.Mutiny"     // Steal deployment points to start a new team
+	commands["points"] = "Server.Points"     // Display how many deployment points your team has
+
+	if value, exists := commands[input]; exists {
+		return value, exists
+	} else {
+		return "", false
+	}
+}
+
+// AcceptCommands presents the user with an input prompt, repeatedly accepting input delimited
+// with a newline until the user enters 'quit'
+func AcceptCommands(playerId string, connection *rpc.Client) {
+
+	reader := bufio.NewReader(os.Stdin)
+	var input string
 
 	for {
 
@@ -99,31 +105,43 @@ func AcceptCommands(playerId string, connection *rpc.Client) {
 
 		fmt.Printf("> ")
 
-		// Get the input, divide into fields
-		input, _ 	= reader.ReadString('\n')
-		input 		= strings.TrimRight(input, "\n")
-		fields 		:= strings.Fields(input)
+		// Get user input
+		input, _ = reader.ReadString('\n')
+		input = strings.TrimRight(input, "\n")
 
-		// If the first field in the input matches a key in the commands hashmap
-		if _, ok := commands[fields[0]]; ok {
-			var response string
-
-			// Wrap command in ClientCommand struct
-			command := ClientCommand{ PlayerId: playerId, Fields: fields }
-
-			// Send ClientCommand to Server and print response
-			err := connection.Call(commands[fields[0]], &command, &response)
-			if err != nil {
-				fmt.Println("Error: " + err.Error())
-
-			}
-
-			fmt.Println(response)
-		} else {
-			fmt.Printf("Command '%v' not found.\n", input)
-		}
+		// Parse input
+		SendCommand(playerId, connection, input)
 
 	}
 }
 
+// AcceptCommands takes a the UserID, RPC Client object and raw user input
+// If the first token of the input matches a key in hashmap of commands
+// their UserID and full input are sent to the server wrapped in ClientCommand struct.
+// Response string from server is printed to screen.
+func SendCommand(playerId string, connection *rpc.Client, input string) {
+	var response string
 
+	// Split input string into space-delimited array
+	fields := strings.Fields(input)
+
+	// Make sure its a valid server command and get its corresponding RPC call
+	rpcCall, valid := GetCommand(fields[0])
+
+	if valid {
+
+		// Wrap command in ClientCommand struct
+		command := ClientCommand{PlayerId: playerId, Fields: fields}
+
+		// Run the command
+		err := connection.Call(rpcCall, &command, &response)
+		if err != nil {
+			fmt.Println("Error: " + err.Error())
+
+		}
+	} else {
+		fmt.Printf("Command '%v' not found.\n", input)
+	}
+
+	fmt.Println(response)
+}
